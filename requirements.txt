@@ -1,0 +1,34 @@
+# Core ML and NLP libraries
+torch>=1.9.0
+transformers>=4.20.0
+datasets>=2.0.0
+tokenizers>=0.12.0
+
+# Data processing
+pandas>=1.3.0
+numpy>=1.21.0
+scikit-learn>=1.0.0
+
+# Ontology processing
+rdflib>=6.0.0
+owlready2>=0.39
+
+# Text processing
+spacy>=3.4.0
+nltk>=3.7
+
+# Evaluation and metrics
+seqeval>=1.2.0
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# PDF processing for corporate reports
+PyPDF2>=2.10.0
+pdfplumber>=0.7.0
+
+# Jupyter notebooks
+jupyter>=1.0.0
+ipykernel>=6.0.0
+
+# Financial NLP models
+# Note: Install FinBERT via: pip install git+https://github.com/ProsusAI/finBERT.git

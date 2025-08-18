@@ -1,0 +1,51 @@
+{
+  "known_indicators": [],
+  "potential_new_indicators": [
+    {
+      "phrase": "company",
+      "sentence": "Our company achieved a 25% reduction in carbon emissions this year, improving our \n    energy efficiency significantly",
+      "predicted_category": "Environmental",
+      "category_scores": {
+        "Environmental": 0.05294117647058824,
+        "Social": 0.0,
+        "Governance": 0.0
+      },
+      "confidence": 0.05294117647058824,
+      "extraction_type": "new_contextual"
+    },
+    {
+      "phrase": "improving our \n    energy",
+      "sentence": "Our company achieved a 25% reduction in carbon emissions this year, improving our \n    energy efficiency significantly",
+      "predicted_category": "Environmental",
+      "category_scores": {
+        "Environmental": 0.05294117647058824,
+        "Social": 0.0,
+        "Governance": 0.0
+      },
+      "confidence": 0.05294117647058824,
+      "extraction_type": "new_contextual"
+    },
+    {
+      "phrase": "carbon emissions",
+      "sentence": "Our company achieved a 25% reduction in carbon emissions this year, improving our \n    energy efficiency significantly",
+      "predicted_category": "Environmental",
+      "category_scores": {
+        "Environmental": 0.05294117647058824,
+        "Social": 0.0,
+        "Governance": 0.0
+      },
+      "confidence": 0.05294117647058824,
+      "extraction_type": "new_contextual"
+    }
+  ],
+  "text_esg_scores": {
+    "Environmental": 0.017741935483870968,
+    "Social": 0.016129032258064516,
+    "Governance": 0.011290322580645162
+  },
+  "semantic_similarities": {
+    "Environmental": 0.19084881246089935,
+    "Social": 0.2466491460800171,
+    "Governance": 0.20647741854190826
+  }
+}
