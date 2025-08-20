@@ -1,0 +1,398 @@
+{
+  "metadata": {
+    "analysis_date": "2025-08-18T18:44:02.756705",
+    "ontology_path": "../esgontology.owl",
+    "total_triples": 604,
+    "total_indicators": 51
+  },
+  "performance_indicators": [
+    {
+      "name": "EnergyEfficiency",
+      "label": "EnergyEfficiency",
+      "comment": "",
+      "type": "PerformanceIndicator",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#EnergyEfficiency"
+    },
+    {
+      "name": "WasteReductionIndicator",
+      "label": "WasteReductionIndicator",
+      "comment": "",
+      "type": "PerformanceIndicator",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#WasteReductionIndicator"
+    }
+  ],
+  "maturity_indicators": [],
+  "esg_categories": [
+    {
+      "name": "Energy",
+      "label": "Energy",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Energy"
+    },
+    {
+      "name": "Hazardous_Waste",
+      "label": "Hazardous_Waste",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Hazardous_Waste"
+    },
+    {
+      "name": "Waste",
+      "label": "Waste",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Waste"
+    },
+    {
+      "name": "WasteCategory",
+      "label": "WasteCategory",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#WasteCategory"
+    },
+    {
+      "name": "WasteOutput",
+      "label": "WasteOutput",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#WasteOutput"
+    },
+    {
+      "name": "WasteProcessing",
+      "label": "WasteProcessing",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#WasteProcessing"
+    },
+    {
+      "name": "WasteRecycling",
+      "label": "WasteRecycling",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#WasteRecycling"
+    },
+    {
+      "name": "WasteReduction",
+      "label": "WasteReduction",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#WasteReduction"
+    },
+    {
+      "name": "Water",
+      "label": "Water",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Water"
+    },
+    {
+      "name": "WaterEfficiency",
+      "label": "WaterEfficiency",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#WaterEfficiency"
+    },
+    {
+      "name": "WaterRecycling",
+      "label": "WaterRecycling",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#WaterRecycling"
+    },
+    {
+      "name": "WaterUsage",
+      "label": "WaterUsage",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#WaterUsage"
+    },
+    {
+      "name": "GHG_Emissions",
+      "label": "GHG_Emissions",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#GHG_Emissions"
+    },
+    {
+      "name": "Biodiversity",
+      "label": "Biodiversity",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Biodiversity"
+    },
+    {
+      "name": "Health_and_Safety",
+      "label": "Health_and_Safety",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Health_and_Safety"
+    },
+    {
+      "name": "Employee_Development",
+      "label": "Employee_Development",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Employee_Development"
+    },
+    {
+      "name": "Employee_Turnover",
+      "label": "Employee_Turnover",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Employee_Turnover"
+    },
+    {
+      "name": "Board_Diversity",
+      "label": "Board_Diversity",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Board_Diversity"
+    },
+    {
+      "name": "Human_Rights",
+      "label": "Human_Rights",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Human_Rights"
+    },
+    {
+      "name": "Corruption",
+      "label": "Corruption",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Corruption"
+    },
+    {
+      "name": "Environmental_Fines",
+      "label": "Environmental_Fines",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Fines"
+    },
+    {
+      "name": "Green_Buildings",
+      "label": "Green_Buildings",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Green_Buildings"
+    },
+    {
+      "name": "Green_Products",
+      "label": "Green_Products",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Green_Products"
+    },
+    {
+      "name": "Hazardous_Waste",
+      "label": "Hazardous_Waste",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Hazardous_Waste"
+    },
+    {
+      "name": "Non-GHG_Air_Emissions",
+      "label": "Non-GHG_Air_Emissions",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Non-GHG_Air_Emissions"
+    },
+    {
+      "name": "Ozone-Depleting_Gases",
+      "label": "Ozone-Depleting_Gases",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Ozone-Depleting_Gases"
+    },
+    {
+      "name": "Product_Safety",
+      "label": "Product_Safety",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Product_Safety"
+    },
+    {
+      "name": "Resource_Efficiency",
+      "label": "Resource_Efficiency",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Resource_Efficiency"
+    },
+    {
+      "name": "WaterEfficiency",
+      "label": "WaterEfficiency",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#WaterEfficiency"
+    },
+    {
+      "name": "WasteReduction",
+      "label": "WasteReduction",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#WasteReduction"
+    },
+    {
+      "name": "WasteRecycling",
+      "label": "WasteRecycling",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#WasteRecycling"
+    },
+    {
+      "name": "Climate_Risk_Mgmt.",
+      "label": "Climate_Risk_Mgmt.",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Climate_Risk_Mgmt."
+    },
+    {
+      "name": "Child_Labor",
+      "label": "Child_Labor",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Child_Labor"
+    },
+    {
+      "name": "Collective_Bargaining",
+      "label": "Collective_Bargaining",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Collective_Bargaining"
+    },
+    {
+      "name": "Community_and_Society",
+      "label": "Community_and_Society",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Community_and_Society"
+    },
+    {
+      "name": "Corporate_Governance",
+      "label": "Corporate_Governance",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Corporate_Governance"
+    },
+    {
+      "name": "Customer_Relationship",
+      "label": "Customer_Relationship",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Customer_Relationship"
+    },
+    {
+      "name": "Board_Diversity",
+      "label": "Board_Diversity",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Board_Diversity"
+    },
+    {
+      "name": "Diversity",
+      "label": "Diversity",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Diversity"
+    },
+    {
+      "name": "ESG_Incentives",
+      "label": "ESG_Incentives",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#ESG_Incentives"
+    },
+    {
+      "name": "Environmental_Mgmt._System",
+      "label": "Environmental_Mgmt._System",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Mgmt._System"
+    },
+    {
+      "name": "Environmental_Policy",
+      "label": "Environmental_Policy",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Policy"
+    },
+    {
+      "name": "Financial_Inclusion",
+      "label": "Financial_Inclusion",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Financial_Inclusion"
+    },
+    {
+      "name": "Labor_Practices",
+      "label": "Labor_Practices",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Labor_Practices"
+    },
+    {
+      "name": "Privacy_and_IT",
+      "label": "Privacy_and_IT",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Privacy_and_IT"
+    },
+    {
+      "name": "Remuneration",
+      "label": "Remuneration",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Remuneration"
+    },
+    {
+      "name": "Supply_Chain",
+      "label": "Supply_Chain",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Supply_Chain"
+    },
+    {
+      "name": "Sustainable_Finance",
+      "label": "Sustainable_Finance",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Sustainable_Finance"
+    },
+    {
+      "name": "Taxes",
+      "label": "Taxes",
+      "comment": "",
+      "type": "ESGCategory",
+      "uri": "http://www.annasvijaya.com/ESGOnt/esgontology#Taxes"
+    }
+  ],
+  "relationships": [
+    {
+      "subject": "MNE1_Energy",
+      "predicate": "impacts",
+      "object": "SDG7"
+    },
+    {
+      "subject": "SME1_Waste",
+      "predicate": "impacts",
+      "object": "SDG12"
+    }
+  ],
+  "sdg_mappings": [
+    {
+      "concept": "MNE1_Energy",
+      "sdg": "SDG7"
+    },
+    {
+      "concept": "SME1_Waste",
+      "sdg": "SDG12"
+    }
+  ],
+  "summary": {
+    "performance_indicators_count": 2,
+    "maturity_indicators_count": 0,
+    "esg_categories_count": 49,
+    "total_potential_indicators": 51
+  }
+}
