@@ -1,0 +1,279 @@
+{
+  "bayer-nachhaltigkeitsbericht-2023.pdf": {
+    "samples": 606,
+    "unique_indicators": 32,
+    "avg_match_score": 0.19616533081879614,
+    "avg_text_length": 452.05940594059405,
+    "category_distribution": {
+      "Environmental": 606
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 558,
+      "": 48
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\bayer_nachhaltigkeitsbericht_2023_esg_dataset.csv"
+  },
+  "bayer-sasb-index-2023.pdf": {
+    "samples": 127,
+    "unique_indicators": 24,
+    "avg_match_score": 0.3313648293963256,
+    "avg_text_length": 546.0472440944882,
+    "category_distribution": {
+      "Environmental": 127
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 125,
+      "": 2
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\bayer_sasb_index_2023_esg_dataset.csv"
+  },
+  "bayer-sfdr-index-2023.pdf": {
+    "samples": 9,
+    "unique_indicators": 7,
+    "avg_match_score": 0.3314814814814815,
+    "avg_text_length": 546.3333333333334,
+    "category_distribution": {
+      "Environmental": 9
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 9
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\bayer_sfdr_index_2023_esg_dataset.csv"
+  },
+  "bayer-sustainability-highlight-report-2023.pdf": {
+    "samples": 52,
+    "unique_indicators": 16,
+    "avg_match_score": 0.3035714285714285,
+    "avg_text_length": 422.2692307692308,
+    "category_distribution": {
+      "Environmental": 52
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 50,
+      "": 2
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\bayer_sustainability_highlight_report_2023_esg_dataset.csv"
+  },
+  "bayer-sustainability-report-2023.pdf": {
+    "samples": 1582,
+    "unique_indicators": 37,
+    "avg_match_score": 0.32519414845584255,
+    "avg_text_length": 429.66814159292034,
+    "category_distribution": {
+      "Environmental": 1582
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 1552,
+      "": 30
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\bayer_sustainability_report_2023_esg_dataset.csv"
+  },
+  "bayer-tcfd-report-2023.pdf": {
+    "samples": 151,
+    "unique_indicators": 19,
+    "avg_match_score": 0.29230526647745186,
+    "avg_text_length": 435.3774834437086,
+    "category_distribution": {
+      "Environmental": 151
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 151
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\bayer_tcfd_report_2023_esg_dataset.csv"
+  },
+  "Non-Financial-Report-2023.pdf": {
+    "samples": 1627,
+    "unique_indicators": 38,
+    "avg_match_score": 0.30978502648754647,
+    "avg_text_length": 567.8315918869084,
+    "category_distribution": {
+      "Environmental": 1627
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 1570,
+      "": 57
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\Non_Financial_Report_2023_esg_dataset.csv"
+  },
+  "entire-dtag-gb23.pdf": {
+    "samples": 539,
+    "unique_indicators": 27,
+    "avg_match_score": 0.18950658185352065,
+    "avg_text_length": 466.6808905380334,
+    "category_distribution": {
+      "Environmental": 539
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 528,
+      "": 11
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\entire_dtag_gb23_esg_dataset.csv"
+  },
+  "DHL-Group-2023-Annual-Report.pdf": {
+    "samples": 1215,
+    "unique_indicators": 35,
+    "avg_match_score": 0.24948657652361356,
+    "avg_text_length": 471.679012345679,
+    "category_distribution": {
+      "Environmental": 1215
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 1196,
+      "": 19
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\DHL_Group_2023_Annual_Report_esg_dataset.csv"
+  },
+  "DHL-Group-2023-ESG-Presentation.pdf": {
+    "samples": 160,
+    "unique_indicators": 26,
+    "avg_match_score": 0.34382440476190473,
+    "avg_text_length": 514.08125,
+    "category_distribution": {
+      "Environmental": 160
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 155,
+      "": 5
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\DHL_Group_2023_ESG_Presentation_esg_dataset.csv"
+  },
+  "DHL-Group-list-of-shareholdings-2023-12-31.pdf": {
+    "samples": 31,
+    "unique_indicators": 9,
+    "avg_match_score": 0.2860215053763441,
+    "avg_text_length": 812.8064516129032,
+    "category_distribution": {
+      "Environmental": 31
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 31
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\DHL_Group_list_of_shareholdings_2023_12_31_esg_dataset.csv"
+  },
+  "EON_2024_On_course_for_net_zero.pdf": {
+    "samples": 229,
+    "unique_indicators": 22,
+    "avg_match_score": 0.29310147639841966,
+    "avg_text_length": 441.0174672489083,
+    "category_distribution": {
+      "Environmental": 229
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 228,
+      "": 1
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\EON_2024_On_course_for_net_zero_esg_dataset.csv"
+  },
+  "EON_GB2023_gesamt_dt_final.pdf": {
+    "samples": 592,
+    "unique_indicators": 24,
+    "avg_match_score": 0.22072675353925353,
+    "avg_text_length": 560.6114864864865,
+    "category_distribution": {
+      "Environmental": 592
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 567,
+      "": 25
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\EON_GB2023_gesamt_dt_final_esg_dataset.csv"
+  },
+  "creating-shared-value-sustainability-report-2023-en.pdf": {
+    "samples": 731,
+    "unique_indicators": 35,
+    "avg_match_score": 0.3119015047879617,
+    "avg_text_length": 454.4733242134063,
+    "category_distribution": {
+      "Environmental": 731
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 720,
+      "": 11
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\creating_shared_value_sustainability_report_2023_en_esg_dataset.csv"
+  },
+  "sap-2023-annual-report-form-20f.pdf": {
+    "samples": 1305,
+    "unique_indicators": 34,
+    "avg_match_score": 0.22478197409231893,
+    "avg_text_length": 491.46436781609196,
+    "category_distribution": {
+      "Environmental": 1305
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 1297,
+      "": 8
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\sap_2023_annual_report_form_20f_esg_dataset.csv"
+  },
+  "sap-2023-integrated-report.pdf": {
+    "samples": 1725,
+    "unique_indicators": 38,
+    "avg_match_score": 0.24637543133195308,
+    "avg_text_length": 499.6608695652174,
+    "category_distribution": {
+      "Environmental": 1725
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 1688,
+      "": 37
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\sap_2023_integrated_report_esg_dataset.csv"
+  },
+  "sap-2024-annual-report-form-20f.pdf": {
+    "samples": 1293,
+    "unique_indicators": 32,
+    "avg_match_score": 0.22125087467314847,
+    "avg_text_length": 491.03944315545243,
+    "category_distribution": {
+      "Environmental": 1293
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 1290,
+      "": 3
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\sap_2024_annual_report_form_20f_esg_dataset.csv"
+  },
+  "sap-2024-integrated-report.pdf": {
+    "samples": 2018,
+    "unique_indicators": 37,
+    "avg_match_score": 0.24683267261314837,
+    "avg_text_length": 481.0386521308226,
+    "category_distribution": {
+      "Environmental": 2018
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 1974,
+      "": 44
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\sap_2024_integrated_report_esg_dataset.csv"
+  },
+  "sustainability-report-fy2023-peru.pdf": {
+    "samples": 989,
+    "unique_indicators": 38,
+    "avg_match_score": 0.31595045500505564,
+    "avg_text_length": 437.6723963599596,
+    "category_distribution": {
+      "Environmental": 989
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 972,
+      "": 17
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\sustainability_report_fy2023_peru_esg_dataset.csv"
+  },
+  "2023_Volkswagen_Group_Nachhaltigkeitsbericht.pdf": {
+    "samples": 331,
+    "unique_indicators": 26,
+    "avg_match_score": 0.2215256797583081,
+    "avg_text_length": 469.6465256797583,
+    "category_distribution": {
+      "Environmental": 331
+    },
+    "framework_distribution": {
+      "ONTOLOGY": 307,
+      "": 24
+    },
+    "file_path": "data\\processed\\corporate_reports\\individual_reports\\2023_Volkswagen_Group_Nachhaltigkeitsbericht_esg_dataset.csv"
+  }
+}

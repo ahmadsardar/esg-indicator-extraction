@@ -1,0 +1,115 @@
+indicator_id,name,description,category,subcategory,data_type,unit,source,framework,original_source
+ONT_001,EnergyEfficiency,ESG indicator for energyefficiency,Environmental,EnergyEfficiency,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#EnergyEfficiency
+ONT_002,WasteReductionIndicator,ESG indicator for wastereductionindicator,Environmental,WasteReductionIndicator,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#WasteReductionIndicator
+ONT_003,Energy,ESG indicator for energy,Environmental,Energy,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Energy
+ONT_004,Hazardous_Waste,ESG indicator for hazardous waste,Environmental,Hazardous_Waste,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Hazardous_Waste
+ONT_005,Waste,ESG indicator for waste,Environmental,Waste,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Waste
+ONT_006,WasteCategory,ESG indicator for wastecategory,Environmental,WasteCategory,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#WasteCategory
+ONT_007,WasteOutput,ESG indicator for wasteoutput,Environmental,WasteOutput,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#WasteOutput
+ONT_008,WasteProcessing,ESG indicator for wasteprocessing,Environmental,WasteProcessing,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#WasteProcessing
+ONT_009,WasteRecycling,ESG indicator for wasterecycling,Environmental,WasteRecycling,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#WasteRecycling
+ONT_010,WasteReduction,ESG indicator for wastereduction,Environmental,WasteReduction,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#WasteReduction
+ONT_011,Water,ESG indicator for water,Environmental,Water,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Water
+ONT_012,WaterEfficiency,ESG indicator for waterefficiency,Environmental,WaterEfficiency,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#WaterEfficiency
+ONT_013,WaterRecycling,ESG indicator for waterrecycling,Environmental,WaterRecycling,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#WaterRecycling
+ONT_014,WaterUsage,ESG indicator for waterusage,Environmental,WaterUsage,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#WaterUsage
+ONT_015,GHG_Emissions,ESG indicator for ghg emissions,Environmental,GHG_Emissions,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#GHG_Emissions
+ONT_016,Biodiversity,ESG indicator for biodiversity,Environmental,Biodiversity,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Biodiversity
+ONT_017,Health_and_Safety,ESG indicator for health and safety,Environmental,Health_and_Safety,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Health_and_Safety
+ONT_018,Employee_Development,ESG indicator for employee development,Environmental,Employee_Development,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Employee_Development
+ONT_019,Employee_Turnover,ESG indicator for employee turnover,Environmental,Employee_Turnover,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Employee_Turnover
+ONT_020,Board_Diversity,ESG indicator for board diversity,Environmental,Board_Diversity,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Board_Diversity
+ONT_021,Human_Rights,ESG indicator for human rights,Environmental,Human_Rights,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Human_Rights
+ONT_022,Corruption,ESG indicator for corruption,Environmental,Corruption,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Corruption
+ONT_023,Environmental_Fines,ESG indicator for environmental fines,Environmental,Environmental_Fines,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Fines
+ONT_024,Green_Buildings,ESG indicator for green buildings,Environmental,Green_Buildings,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Green_Buildings
+ONT_025,Green_Products,ESG indicator for green products,Environmental,Green_Products,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Green_Products
+ONT_027,Non-GHG_Air_Emissions,ESG indicator for non-ghg air emissions,Environmental,Non-GHG_Air_Emissions,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Non-GHG_Air_Emissions
+ONT_028,Ozone-Depleting_Gases,ESG indicator for ozone-depleting gases,Environmental,Ozone-Depleting_Gases,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Ozone-Depleting_Gases
+ONT_029,Product_Safety,ESG indicator for product safety,Environmental,Product_Safety,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Product_Safety
+ONT_030,Resource_Efficiency,ESG indicator for resource efficiency,Environmental,Resource_Efficiency,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Resource_Efficiency
+ONT_034,Climate_Risk_Mgmt.,ESG indicator for climate risk mgmt.,Environmental,Climate_Risk_Mgmt.,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Climate_Risk_Mgmt.
+ONT_035,Child_Labor,ESG indicator for child labor,Environmental,Child_Labor,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Child_Labor
+ONT_036,Collective_Bargaining,ESG indicator for collective bargaining,Environmental,Collective_Bargaining,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Collective_Bargaining
+ONT_037,Community_and_Society,ESG indicator for community and society,Environmental,Community_and_Society,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Community_and_Society
+ONT_038,Corporate_Governance,ESG indicator for corporate governance,Environmental,Corporate_Governance,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Corporate_Governance
+ONT_039,Customer_Relationship,ESG indicator for customer relationship,Environmental,Customer_Relationship,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Customer_Relationship
+ONT_041,Diversity,ESG indicator for diversity,Environmental,Diversity,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Diversity
+ONT_042,ESG_Incentives,ESG indicator for esg incentives,Environmental,ESG_Incentives,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#ESG_Incentives
+ONT_043,Environmental_Mgmt._System,ESG indicator for environmental mgmt. system,Environmental,Environmental_Mgmt._System,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Mgmt._System
+ONT_044,Environmental_Policy,ESG indicator for environmental policy,Environmental,Environmental_Policy,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Policy
+ONT_045,Financial_Inclusion,ESG indicator for financial inclusion,Environmental,Financial_Inclusion,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Financial_Inclusion
+ONT_046,Labor_Practices,ESG indicator for labor practices,Environmental,Labor_Practices,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Labor_Practices
+ONT_047,Privacy_and_IT,ESG indicator for privacy and it,Environmental,Privacy_and_IT,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Privacy_and_IT
+ONT_048,Remuneration,ESG indicator for remuneration,Environmental,Remuneration,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Remuneration
+ONT_049,Supply_Chain,ESG indicator for supply chain,Environmental,Supply_Chain,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Supply_Chain
+ONT_050,Sustainable_Finance,ESG indicator for sustainable finance,Environmental,Sustainable_Finance,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Sustainable_Finance
+ONT_051,Taxes,ESG indicator for taxes,Environmental,Taxes,Quantitative,,ESG_ONTOLOGY,ONTOLOGY,http://www.annasvijaya.com/ESGOnt/esgontology#Taxes
+,GHGEmissionsScope1,Direct greenhouse gas emissions from owned or controlled sources,Environmental,Climate Change,,tCO2e,GRI,,
+,GHGEmissionsScope2,Indirect greenhouse gas emissions from purchased energy,Environmental,Climate Change,,tCO2e,GRI,,
+,GHGEmissionsScope3,Other indirect greenhouse gas emissions in value chain,Environmental,Climate Change,,tCO2e,GRI,,
+,CarbonIntensity,Carbon emissions per unit of revenue or production,Environmental,Climate Change,,tCO2e/revenue,SASB,,
+,EnergyConsumption,Total energy consumption within the organization,Environmental,Energy Management,,GJ or MWh,GRI,,
+,RenewableEnergyPercentage,Percentage of energy consumption from renewable sources,Environmental,Energy Management,,%,GRI,,
+,EnergyIntensity,Energy consumption per unit of activity or revenue,Environmental,Energy Management,,GJ/revenue,GRI,,
+,WaterConsumption,Total water consumption by the organization,Environmental,Water Management,,m³,GRI,,
+,WaterStressAreas,Water consumption in water-stressed areas,Environmental,Water Management,,m³,SASB,,
+,WasteGenerated,Total weight of waste generated,Environmental,Waste Management,,tons,GRI,,
+,WasteRecycled,Percentage of waste diverted from disposal through recycling,Environmental,Waste Management,,%,GRI,,
+,HazardousWaste,Total weight of hazardous waste generated,Environmental,Waste Management,,tons,GRI,,
+,BiodiversityImpact,Significant impacts on biodiversity in protected areas,Environmental,Biodiversity,,description,GRI,,
+,LandUse,"Total land area owned, leased, or managed for production activities",Environmental,Biodiversity,,hectares,SASB,,
+,AirEmissions,"Air emissions of pollutants (NOx, SOx, particulates)",Environmental,Air Quality,,tons,SASB,,
+,EmployeeTurnover,Total number and rates of new employee hires and employee turnover,Social,Employment,,rate %,GRI,,
+,EmployeeBenefits,Benefits provided to full-time employees,Social,Employment,,description,GRI,,
+,BoardDiversity,"Diversity of governance bodies and employees by gender, age, minority groups",Social,Diversity & Inclusion,,%,GRI,,
+,GenderPayGap,Ratio of basic salary and remuneration of women to men,Social,Diversity & Inclusion,,ratio,GRI,,
+,WomenInLeadership,Percentage of women in leadership positions,Social,Diversity & Inclusion,,%,SASB,,
+,WorkplaceInjuries,Work-related injuries and injury rates,Social,Health & Safety,,rate per hours worked,GRI,,
+,OccupationalDiseases,Work-related ill health and occupational diseases,Social,Health & Safety,,cases,GRI,,
+,SafetyTraining,Workers covered by occupational health and safety management system,Social,Health & Safety,,%,GRI,,
+,EmployeeTraining,Average hours of training per year per employee,Social,Training & Development,,hours,GRI,,
+,SkillsDevelopment,Programs for upgrading employee skills and transition assistance,Social,Training & Development,,description,GRI,,
+,HumanRightsAssessment,Operations subject to human rights reviews or impact assessments,Social,Human Rights,,number and %,GRI,,
+,ChildLaborRisk,Operations and suppliers at significant risk for child labor,Social,Human Rights,,description,GRI,,
+,CommunityEngagement,Operations with local community engagement and development programs,Social,Community Relations,,%,GRI,,
+,LocalSuppliers,Proportion of spending on local suppliers,Social,Community Relations,,%,GRI,,
+,DataSecurity,Description of approach to identifying and addressing data security risks,Social,Data Privacy,,description,SASB,,
+,CustomerPrivacy,Number of data breaches and customers affected,Social,Data Privacy,,number,SASB,,
+,BoardIndependence,Percentage of independent board members,Governance,Board Composition,,%,GRI,,
+,BoardMeetings,Number of board meetings per year and attendance rates,Governance,Board Composition,,number,GRI,,
+,ExecutiveCompensation,Annual total compensation ratio and percentage increase,Governance,Executive Compensation,,ratio,GRI,,
+,AntiCorruption,Operations assessed for risks related to corruption,Governance,Ethics & Compliance,,number and %,GRI,,
+,EthicsTraining,Communication and training about anti-corruption policies,Governance,Ethics & Compliance,,%,GRI,,
+,LegalCompliance,Legal actions for anti-competitive behavior and violations,Governance,Ethics & Compliance,,number,GRI,,
+,ClimateRiskGovernance,Board oversight of climate-related risks and opportunities,Governance,Risk Management,,description,TCFD,,
+,RiskManagementProcess,"Processes for identifying, assessing and managing climate-related risks",Governance,Risk Management,,description,TCFD,,
+,SupplierAssessment,New suppliers screened using environmental and social criteria,Governance,Supply Chain,,%,GRI,,
+,SupplierAudits,Suppliers assessed for environmental and social impacts,Governance,Supply Chain,,number,GRI,,
+,ESGReporting,Publication of sustainability reports and ESG disclosures,Governance,Transparency,,yes/no,GRI,,
+,StakeholderEngagement,Stakeholder groups engaged and key topics raised,Governance,Transparency,,description,GRI,,
+NEW_001,Net Promoter Score (NPS),Customer satisfaction metric measuring likelihood to recommend company to others,Social,Customer Relations,Numeric,,Corporate Reports,Manual,
+NEW_002,Lost Time Injury Frequency Rate (LTIFR),Safety metric measuring frequency of workplace injuries resulting in lost time,Social,Health and Safety,Numeric,,Corporate Reports,Manual,
+NEW_003,EBITA Margin,Earnings Before Interest Taxes and Amortization as percentage of revenue,Governance,Financial Performance,Percentage,,Corporate Reports,Manual,
+NEW_004,Digital Learning Hours,Average hours of digital training per employee per year,Social,Employee Development,Numeric,,Corporate Reports,Manual,
+NEW_005,Customer Avoided Emissions,CO2 emissions avoided by customers through use of company products/services,Environmental,Climate Impact,Numeric,,Corporate Reports,Manual,
+NEW_006,Carbon Neutral Operations,Target year and progress toward achieving carbon neutral operations,Environmental,Climate Action,Binary/Date,,Corporate Reports,Manual,
+NEW_007,Digital Twin Implementation,Use of digital twin technology in operations and products,Environmental,Innovation,Binary,,Corporate Reports,Manual,
+NEW_008,Water Strategy Implementation,Percentage of locations with implemented water management strategy,Environmental,Water Management,Percentage,,Corporate Reports,Manual,
+NEW_009,Patent Portfolio Sustainability,Percentage of patents related to sustainability/SDGs,Governance,Innovation,Percentage,,Corporate Reports,Manual,
+NEW_010,R&D Intensity,Research and Development expenses as percentage of revenue,Governance,Innovation,Percentage,,Corporate Reports,Manual,
+NEW_011,Scope 1 Emissions,Direct greenhouse gas emissions from owned/controlled sources,Environmental,Climate Impact,Numeric,,Corporate Reports,Manual,
+NEW_012,Scope 2 Emissions,Indirect emissions from purchased electricity/energy,Environmental,Climate Impact,Numeric,,Corporate Reports,Manual,
+NEW_013,Scope 3 Emissions,Indirect emissions from value chain activities,Environmental,Climate Impact,Numeric,,Corporate Reports,Manual,
+NEW_014,EU Taxonomy Alignment,Percentage of revenue/CapEx/OpEx aligned with EU Taxonomy,Environmental,Regulatory Compliance,Percentage,,Corporate Reports,Manual,
+NEW_015,Circular Economy Initiatives,Programs and metrics related to circular economy implementation,Environmental,Resource Efficiency,Qualitative,,Corporate Reports,Manual,
+NEW_016,Supply Chain Risk Assessment,Evaluation and management of ESG risks in supply chain,Governance,Supply Chain,Qualitative,,Corporate Reports,Manual,
+NEW_017,Cybersecurity Incidents,Number and severity of cybersecurity breaches/incidents,Governance,Data Security,Numeric,,Corporate Reports,Manual,
+NEW_018,Employee Retention Rate,Percentage of employees retained over specific time period,Social,Employee Relations,Percentage,,Corporate Reports,Manual,
+NEW_019,Diversity Ratio,Percentage representation of diverse groups in workforce/leadership,Social,Diversity and Inclusion,Percentage,,Corporate Reports,Manual,
+NEW_020,Smart Meter Deployment,Number of smart energy meters installed,Environmental,Energy Infrastructure,Numeric,,Corporate Reports,Manual,
+NEW_021,Renewable Energy Integration,Percentage of renewable energy in operations/grid,Environmental,Energy Transition,Percentage,,Corporate Reports,Manual,
+NEW_022,ESG Sustainability Index,Internal composite index measuring ESG performance,Governance,ESG Performance,Numeric,,Corporate Reports,Manual,
+NEW_023,Management Compensation ESG Link,Percentage of executive compensation tied to ESG metrics,Governance,Executive Compensation,Percentage,,Corporate Reports,Manual,
+NEW_024,Productivity Improvement,Percentage increase in operational productivity,Governance,Operational Efficiency,Percentage,,Corporate Reports,Manual,
+NEW_025,Energy Consumption Reduction,Percentage reduction in energy consumption over time,Environmental,Energy Efficiency,Percentage,,Corporate Reports,Manual,

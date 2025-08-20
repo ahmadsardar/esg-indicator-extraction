@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "analysis_date": "2025-08-18T18:44:02.756705",
+    "analysis_date": "2025-08-20T19:18:29.734614",
     "ontology_path": "../esgontology.owl",
     "total_triples": 604,
     "total_indicators": 51
@@ -369,24 +369,24 @@
   ],
   "relationships": [
     {
-      "subject": "MNE1_Energy",
-      "predicate": "impacts",
-      "object": "SDG7"
-    },
-    {
       "subject": "SME1_Waste",
       "predicate": "impacts",
       "object": "SDG12"
+    },
+    {
+      "subject": "MNE1_Energy",
+      "predicate": "impacts",
+      "object": "SDG7"
     }
   ],
   "sdg_mappings": [
     {
-      "concept": "MNE1_Energy",
-      "sdg": "SDG7"
-    },
-    {
       "concept": "SME1_Waste",
       "sdg": "SDG12"
+    },
+    {
+      "concept": "MNE1_Energy",
+      "sdg": "SDG7"
     }
   ],
   "summary": {

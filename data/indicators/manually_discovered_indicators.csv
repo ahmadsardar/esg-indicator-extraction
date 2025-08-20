@@ -1,0 +1,26 @@
+indicator_id,name,description,category,subcategory,data_type,source,framework
+NEW_001,Net Promoter Score (NPS),Customer satisfaction metric measuring likelihood to recommend company to others,Social,Customer Relations,Numeric,Corporate Reports,Manual
+NEW_002,Lost Time Injury Frequency Rate (LTIFR),Safety metric measuring frequency of workplace injuries resulting in lost time,Social,Health and Safety,Numeric,Corporate Reports,Manual
+NEW_003,EBITA Margin,Earnings Before Interest Taxes and Amortization as percentage of revenue,Governance,Financial Performance,Percentage,Corporate Reports,Manual
+NEW_004,Digital Learning Hours,Average hours of digital training per employee per year,Social,Employee Development,Numeric,Corporate Reports,Manual
+NEW_005,Customer Avoided Emissions,CO2 emissions avoided by customers through use of company products/services,Environmental,Climate Impact,Numeric,Corporate Reports,Manual
+NEW_006,Carbon Neutral Operations,Target year and progress toward achieving carbon neutral operations,Environmental,Climate Action,Binary/Date,Corporate Reports,Manual
+NEW_007,Digital Twin Implementation,Use of digital twin technology in operations and products,Environmental,Innovation,Binary,Corporate Reports,Manual
+NEW_008,Water Strategy Implementation,Percentage of locations with implemented water management strategy,Environmental,Water Management,Percentage,Corporate Reports,Manual
+NEW_009,Patent Portfolio Sustainability,Percentage of patents related to sustainability/SDGs,Governance,Innovation,Percentage,Corporate Reports,Manual
+NEW_010,R&D Intensity,Research and Development expenses as percentage of revenue,Governance,Innovation,Percentage,Corporate Reports,Manual
+NEW_011,Scope 1 Emissions,Direct greenhouse gas emissions from owned/controlled sources,Environmental,Climate Impact,Numeric,Corporate Reports,Manual
+NEW_012,Scope 2 Emissions,Indirect emissions from purchased electricity/energy,Environmental,Climate Impact,Numeric,Corporate Reports,Manual
+NEW_013,Scope 3 Emissions,Indirect emissions from value chain activities,Environmental,Climate Impact,Numeric,Corporate Reports,Manual
+NEW_014,EU Taxonomy Alignment,Percentage of revenue/CapEx/OpEx aligned with EU Taxonomy,Environmental,Regulatory Compliance,Percentage,Corporate Reports,Manual
+NEW_015,Circular Economy Initiatives,Programs and metrics related to circular economy implementation,Environmental,Resource Efficiency,Qualitative,Corporate Reports,Manual
+NEW_016,Supply Chain Risk Assessment,Evaluation and management of ESG risks in supply chain,Governance,Supply Chain,Qualitative,Corporate Reports,Manual
+NEW_017,Cybersecurity Incidents,Number and severity of cybersecurity breaches/incidents,Governance,Data Security,Numeric,Corporate Reports,Manual
+NEW_018,Employee Retention Rate,Percentage of employees retained over specific time period,Social,Employee Relations,Percentage,Corporate Reports,Manual
+NEW_019,Diversity Ratio,Percentage representation of diverse groups in workforce/leadership,Social,Diversity and Inclusion,Percentage,Corporate Reports,Manual
+NEW_020,Smart Meter Deployment,Number of smart energy meters installed,Environmental,Energy Infrastructure,Numeric,Corporate Reports,Manual
+NEW_021,Renewable Energy Integration,Percentage of renewable energy in operations/grid,Environmental,Energy Transition,Percentage,Corporate Reports,Manual
+NEW_022,ESG Sustainability Index,Internal composite index measuring ESG performance,Governance,ESG Performance,Numeric,Corporate Reports,Manual
+NEW_023,Management Compensation ESG Link,Percentage of executive compensation tied to ESG metrics,Governance,Executive Compensation,Percentage,Corporate Reports,Manual
+NEW_024,Productivity Improvement,Percentage increase in operational productivity,Governance,Operational Efficiency,Percentage,Corporate Reports,Manual
+NEW_025,Energy Consumption Reduction,Percentage reduction in energy consumption over time,Environmental,Energy Efficiency,Percentage,Corporate Reports,Manual

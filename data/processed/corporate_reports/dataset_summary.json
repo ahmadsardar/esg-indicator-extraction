@@ -1,0 +1,16 @@
+{
+  "total_reports_processed": 20,
+  "total_matched_segments": 15312,
+  "training_samples": 15312,
+  "unique_indicators_found": 38,
+  "category_distribution": {
+    "Environmental": 15312
+  },
+  "framework_distribution": {
+    "ONTOLOGY": 14968,
+    "": 344
+  },
+  "average_match_score": 0.26290537766830874,
+  "average_text_length": 485.49653866248696,
+  "individual_datasets_created": 20
+}

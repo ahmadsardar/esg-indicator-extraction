@@ -1,0 +1,17 @@
+{
+  "timestamp": "20250820_195723",
+  "total_samples_annotated": 15312,
+  "training_samples": 10717,
+  "validation_samples": 2296,
+  "test_samples": 2299,
+  "annotation_quality_high": 6941,
+  "samples_with_numerical_data": 7778,
+  "unique_indicators_found": 50,
+  "files_created": {
+    "enhanced_annotations": "data\\annotations\\enhanced_esg_annotations_20250820_195723.csv",
+    "train_set": "data\\annotations\\esg_train_set_20250820_195723.csv",
+    "validation_set": "data\\annotations\\esg_validation_set_20250820_195723.csv",
+    "test_set": "data\\annotations\\esg_test_set_20250820_195723.csv",
+    "statistics": "data\\annotations\\annotation_statistics_20250820_195723.json"
+  }
+}
