@@ -23,15 +23,14 @@ class ESGAnnotationValidator:
         self.output_dir.mkdir(exist_ok=True)
         
     def load_latest_annotations(self) -> pd.DataFrame:
-        """Load the most recent annotation file"""
-        annotation_files = list(self.annotations_dir.glob('enhanced_esg_annotations_*.csv'))
-        if not annotation_files:
-            raise FileNotFoundError("No annotation files found")
+        """Load the standardized annotation file"""
+        annotation_file = self.annotations_dir / 'enhanced_esg_annotations.csv'
+        if not annotation_file.exists():
+            raise FileNotFoundError(f"Annotation file not found: {annotation_file}")
         
-        latest_file = max(annotation_files, key=lambda x: x.stat().st_mtime)
-        print(f"Loading annotations from: {latest_file}")
+        print(f"Loading annotations from: {annotation_file}")
         
-        df = pd.read_csv(latest_file)
+        df = pd.read_csv(annotation_file)
         print(f"Loaded {len(df)} annotated samples")
         return df
     
@@ -234,21 +233,21 @@ class ESGAnnotationValidator:
         return report, best_samples
     
     def save_validation_results(self, report: Dict, best_samples: pd.DataFrame):
-        """Save validation results and best samples"""
+        """Save validation results and best samples with standardized filenames"""
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         
-        # Save validation report
-        report_path = self.output_dir / f'validation_report_{timestamp}.json'
+        # Save validation report with standardized name
+        report_path = self.output_dir / 'validation_report.json'
         with open(report_path, 'w') as f:
             json.dump(report, f, indent=2, default=str)
         print(f"Validation report saved to: {report_path}")
         
-        # Save best training samples
-        samples_path = self.output_dir / f'best_training_samples_{timestamp}.csv'
+        # Save best training samples with standardized name
+        samples_path = self.output_dir / 'best_training_samples.csv'
         best_samples.to_csv(samples_path, index=False)
         print(f"Best training samples saved to: {samples_path}")
         
-        # Save summary
+        # Save summary with standardized name
         summary = {
             'validation_timestamp': timestamp,
             'total_samples_analyzed': report['dataset_overview']['total_samples'],
@@ -262,7 +261,7 @@ class ESGAnnotationValidator:
             }
         }
         
-        summary_path = self.output_dir / f'validation_summary_{timestamp}.json'
+        summary_path = self.output_dir / 'validation_summary.json'
         with open(summary_path, 'w') as f:
             json.dump(summary, f, indent=2)
         print(f"Validation summary saved to: {summary_path}")

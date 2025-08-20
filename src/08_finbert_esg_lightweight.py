@@ -20,6 +20,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader, WeightedRandomSampler
+from torch.cuda.amp import GradScaler, autocast
 from transformers import (
     AutoTokenizer, AutoModel, AutoConfig,
     AdamW, get_linear_schedule_with_warmup
@@ -90,14 +91,13 @@ class LightweightESGModel(nn.Module):
         """
         Forward pass with memory optimization
         """
-        # Get BERT embeddings
-        with torch.cuda.amp.autocast() if torch.cuda.is_available() else torch.no_grad():
-            outputs = self.bert(
-                input_ids=input_ids,
-                attention_mask=attention_mask,
-                output_hidden_states=False,
-                output_attentions=False
-            )
+        # Get BERT embeddings with autocast for mixed precision
+        outputs = self.bert(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            output_hidden_states=False,
+            output_attentions=False
+        )
         
         # Use pooled output
         pooled_output = outputs.pooler_output
@@ -195,8 +195,8 @@ class LightweightTrainer:
     """
     
     def __init__(self, model_name='ProsusAI/finbert', max_length=128, 
-                 learning_rate=2e-5, batch_size=2, num_epochs=3,
-                 gradient_accumulation_steps=8, early_stopping_patience=3):
+                 learning_rate=2e-5, batch_size=8, num_epochs=3,
+                 gradient_accumulation_steps=2, early_stopping_patience=3):
         
         self.model_name = model_name
         self.max_length = max_length
@@ -210,7 +210,13 @@ class LightweightTrainer:
         
         # Device setup
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        self.use_amp = torch.cuda.is_available()  # Enable mixed precision for GPU
+        self.scaler = GradScaler() if self.use_amp else None
         print(f"Using device: {self.device}")
+        if self.use_amp:
+            print(f"Mixed precision training enabled")
+            print(f"GPU: {torch.cuda.get_device_name(0)}")
+            print(f"GPU Memory: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.1f} GB")
         
         # Initialize tokenizer
         self.tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -228,14 +234,26 @@ class LightweightTrainer:
         
     def load_data(self, train_path, val_path, test_path):
         """
-        Load and preprocess data efficiently
+        Load and preprocess data efficiently with error handling
         """
         print("\n=== LOADING DATA ===")
         
-        # Load datasets
-        self.train_df = pd.read_csv(train_path)
-        self.val_df = pd.read_csv(val_path)
-        self.test_df = pd.read_csv(test_path)
+        try:
+            # Load datasets with error handling
+            if not os.path.exists(train_path):
+                raise FileNotFoundError(f"Training data not found: {train_path}")
+            if not os.path.exists(val_path):
+                raise FileNotFoundError(f"Validation data not found: {val_path}")
+            if not os.path.exists(test_path):
+                raise FileNotFoundError(f"Test data not found: {test_path}")
+                
+            self.train_df = pd.read_csv(train_path)
+            self.val_df = pd.read_csv(val_path)
+            self.test_df = pd.read_csv(test_path)
+            
+        except Exception as e:
+            print(f"Error loading data: {e}")
+            raise
         
         print(f"Train: {len(self.train_df)}, Val: {len(self.val_df)}, Test: {len(self.test_df)}")
         
@@ -267,10 +285,8 @@ class LightweightTrainer:
         
         # Get unique indicators
         indicators = all_df['best_match_indicator'].dropna().unique().tolist()
-        self.num_indicators = min(len(indicators), 30)  # Limit to top 30 indicators
-        
-        # Use more indicators for better coverage
-        self.num_indicators = min(len(indicators), 40)  # Increased from 30 to 40
+        # Use top 60 indicators as fallback (compromise between coverage and performance)
+        self.num_indicators = min(len(indicators), 60)  # Use top 60 indicators
         top_indicators = all_df['best_match_indicator'].value_counts().head(self.num_indicators).index.tolist()
         
         print(f"Using top {self.num_indicators} indicators for training")
@@ -340,30 +356,47 @@ class LightweightTrainer:
     
     def initialize_model(self):
         """
-        Initialize the lightweight model
+        Initialize the lightweight model with error handling
         """
         print("\n=== INITIALIZING MODEL ===")
         
-        self.model = LightweightESGModel(
-            model_name=self.model_name,
-            num_indicators=self.num_indicators
-        ).to(self.device)
-        
-        # Count trainable parameters
-        trainable_params = sum(p.numel() for p in self.model.parameters() if p.requires_grad)
-        total_params = sum(p.numel() for p in self.model.parameters())
-        
-        print(f"Total parameters: {total_params:,}")
-        print(f"Trainable parameters: {trainable_params:,} ({trainable_params/total_params*100:.1f}%)")
-        
-        # Initialize optimizer with improved settings
-        self.optimizer = AdamW(
-            self.model.parameters(),
-            lr=self.learning_rate,
-            weight_decay=0.02,  # Increased weight decay
-            eps=1e-8,
-            betas=(0.9, 0.999)
-        )
+        try:
+            # Clear GPU cache before model initialization
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+                
+            self.model = LightweightESGModel(
+                model_name=self.model_name,
+                num_indicators=self.num_indicators
+            ).to(self.device)
+            
+            # Count trainable parameters
+            trainable_params = sum(p.numel() for p in self.model.parameters() if p.requires_grad)
+            total_params = sum(p.numel() for p in self.model.parameters())
+            
+            print(f"Total parameters: {total_params:,}")
+            print(f"Trainable parameters: {trainable_params:,} ({trainable_params/total_params*100:.1f}%)")
+            
+            # Check GPU memory usage
+            if torch.cuda.is_available():
+                memory_allocated = torch.cuda.memory_allocated(0) / 1024**3
+                memory_reserved = torch.cuda.memory_reserved(0) / 1024**3
+                print(f"GPU Memory - Allocated: {memory_allocated:.2f} GB, Reserved: {memory_reserved:.2f} GB")
+            
+            # Initialize optimizer with improved settings
+            self.optimizer = AdamW(
+                self.model.parameters(),
+                lr=self.learning_rate,
+                weight_decay=0.02,  # Increased weight decay
+                eps=1e-8,
+                betas=(0.9, 0.999)
+            )
+            
+        except Exception as e:
+            print(f"Error initializing model: {e}")
+            if torch.cuda.is_available():
+                torch.cuda.empty_cache()
+            raise
         
         # Calculate training steps
         total_steps = len(self.train_dataset) // (self.batch_size * self.gradient_accumulation_steps) * self.num_epochs
@@ -428,7 +461,7 @@ class LightweightTrainer:
     
     def train_epoch(self, dataloader):
         """
-        Train for one epoch with memory management
+        Train for one epoch with mixed precision and memory management
         """
         self.model.train()
         total_losses = {'total_loss': 0, 'indicator_loss': 0, 'numerical_loss': 0, 'category_loss': 0}
@@ -437,20 +470,29 @@ class LightweightTrainer:
         
         for batch_idx, batch in enumerate(dataloader):
             # Move to device
-            batch = {k: v.to(self.device) for k, v in batch.items()}
+            batch = {k: v.to(self.device, non_blocking=True) for k, v in batch.items()}
             
-            # Forward pass
-            outputs = self.model(
-                input_ids=batch['input_ids'],
-                attention_mask=batch['attention_mask']
-            )
-            
-            # Compute loss
-            losses = self.compute_loss(outputs, batch)
-            scaled_loss = losses['total_loss'] / self.gradient_accumulation_steps
-            
-            # Backward pass
-            scaled_loss.backward()
+            # Forward pass with mixed precision
+            if self.use_amp:
+                with autocast():
+                    outputs = self.model(
+                        input_ids=batch['input_ids'],
+                        attention_mask=batch['attention_mask']
+                    )
+                    losses = self.compute_loss(outputs, batch)
+                    scaled_loss = losses['total_loss'] / self.gradient_accumulation_steps
+                
+                # Backward pass with gradient scaling
+                self.scaler.scale(scaled_loss).backward()
+            else:
+                # CPU fallback
+                outputs = self.model(
+                    input_ids=batch['input_ids'],
+                    attention_mask=batch['attention_mask']
+                )
+                losses = self.compute_loss(outputs, batch)
+                scaled_loss = losses['total_loss'] / self.gradient_accumulation_steps
+                scaled_loss.backward()
             
             # Accumulate losses
             for key, value in losses.items():
@@ -458,25 +500,40 @@ class LightweightTrainer:
             
             # Update weights
             if (batch_idx + 1) % self.gradient_accumulation_steps == 0:
-                torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
-                self.optimizer.step()
+                if self.use_amp:
+                    # Gradient clipping with scaler
+                    self.scaler.unscale_(self.optimizer)
+                    torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
+                    self.scaler.step(self.optimizer)
+                    self.scaler.update()
+                else:
+                    torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
+                    self.optimizer.step()
+                
                 self.scheduler.step()
                 self.optimizer.zero_grad()
                 
                 # Memory cleanup
-                if batch_idx % 50 == 0:
+                if batch_idx % 20 == 0:  # More frequent cleanup for GPU
                     gc.collect()
                     if torch.cuda.is_available():
                         torch.cuda.empty_cache()
             
             # Progress reporting
-            if (batch_idx + 1) % (50 * self.gradient_accumulation_steps) == 0:
+            if (batch_idx + 1) % (20 * self.gradient_accumulation_steps) == 0:
                 print(f"  Batch {batch_idx + 1}/{len(dataloader)}, Loss: {losses['total_loss'].item():.4f}")
         
         # Final update
         if len(dataloader) % self.gradient_accumulation_steps != 0:
-            torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
-            self.optimizer.step()
+            if self.use_amp:
+                self.scaler.unscale_(self.optimizer)
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
+                self.scaler.step(self.optimizer)
+                self.scaler.update()
+            else:
+                torch.nn.utils.clip_grad_norm_(self.model.parameters(), 1.0)
+                self.optimizer.step()
+            
             self.scheduler.step()
             self.optimizer.zero_grad()
         
@@ -488,7 +545,7 @@ class LightweightTrainer:
     
     def evaluate(self, dataloader):
         """
-        Evaluate the model
+        Evaluate the model with mixed precision
         """
         self.model.eval()
         total_losses = {'total_loss': 0, 'indicator_loss': 0, 'numerical_loss': 0, 'category_loss': 0}
@@ -502,14 +559,22 @@ class LightweightTrainer:
         
         with torch.no_grad():
             for batch in dataloader:
-                batch = {k: v.to(self.device) for k, v in batch.items()}
+                batch = {k: v.to(self.device, non_blocking=True) for k, v in batch.items()}
                 
-                outputs = self.model(
-                    input_ids=batch['input_ids'],
-                    attention_mask=batch['attention_mask']
-                )
-                
-                losses = self.compute_loss(outputs, batch)
+                # Forward pass with mixed precision
+                if self.use_amp:
+                    with autocast():
+                        outputs = self.model(
+                            input_ids=batch['input_ids'],
+                            attention_mask=batch['attention_mask']
+                        )
+                        losses = self.compute_loss(outputs, batch)
+                else:
+                    outputs = self.model(
+                        input_ids=batch['input_ids'],
+                        attention_mask=batch['attention_mask']
+                    )
+                    losses = self.compute_loss(outputs, batch)
                 
                 for key, value in losses.items():
                     total_losses[key] += value.item()
@@ -613,42 +678,50 @@ class LightweightTrainer:
         for epoch in range(self.num_epochs):
             print(f"\n--- Epoch {epoch + 1}/{self.num_epochs} ---")
             
-            # Training
-            train_losses = self.train_epoch(train_loader)
-            print(f"Training Loss: {train_losses['total_loss']:.4f}")
-            
-            # Validation
-            val_losses, val_metrics = self.evaluate(val_loader)
-            print(f"Validation Loss: {val_losses['total_loss']:.4f}")
-            print(f"Validation F1 (Indicators): {val_metrics['indicator_f1_micro']:.4f}")
-            print(f"Validation Accuracy (Numerical): {val_metrics['numerical_accuracy']:.4f}")
-            print(f"Validation Accuracy (Category): {val_metrics['category_accuracy']:.4f}")
-            
-            # Early stopping and best model saving
-            current_val_f1 = val_metrics['indicator_f1_micro']
-            if current_val_f1 > best_val_f1:
-                best_val_f1 = current_val_f1
-                patience_counter = 0
-                self.save_model('best_lightweight_model')
-                print(f"New best model saved! F1: {best_val_f1:.4f}")
-            else:
-                patience_counter += 1
-                print(f"No improvement. Patience: {patience_counter}/{self.early_stopping_patience}")
-            
-            # Record history
-            training_history.append({
-                'epoch': epoch + 1,
-                'train_loss': train_losses['total_loss'],
-                'val_loss': val_losses['total_loss'],
-                'val_f1': val_metrics['indicator_f1_micro'],
-                'val_numerical_acc': val_metrics['numerical_accuracy'],
-                'val_category_acc': val_metrics['category_accuracy']
-            })
-            
-            # Early stopping check
-            if patience_counter >= self.early_stopping_patience:
-                print(f"\nEarly stopping triggered after {epoch + 1} epochs!")
-                break
+            try:
+                # Training
+                train_losses = self.train_epoch(train_loader)
+                print(f"Training Loss: {train_losses['total_loss']:.4f}")
+                
+                # Validation
+                val_losses, val_metrics = self.evaluate(val_loader)
+                print(f"Validation Loss: {val_losses['total_loss']:.4f}")
+                print(f"Validation F1 (Indicators): {val_metrics['indicator_f1_micro']:.4f}")
+                print(f"Validation Accuracy (Numerical): {val_metrics['numerical_accuracy']:.4f}")
+                print(f"Validation Accuracy (Category): {val_metrics['category_accuracy']:.4f}")
+                
+                # Early stopping and best model saving
+                current_val_f1 = val_metrics['indicator_f1_micro']
+                if current_val_f1 > best_val_f1:
+                    best_val_f1 = current_val_f1
+                    patience_counter = 0
+                    self.save_model('best_lightweight_model')
+                    print(f"New best model saved! F1: {best_val_f1:.4f}")
+                else:
+                    patience_counter += 1
+                    print(f"No improvement. Patience: {patience_counter}/{self.early_stopping_patience}")
+                
+                # Record history
+                training_history.append({
+                    'epoch': epoch + 1,
+                    'train_loss': train_losses['total_loss'],
+                    'val_loss': val_losses['total_loss'],
+                    'val_f1': val_metrics['indicator_f1_micro'],
+                    'val_numerical_acc': val_metrics['numerical_accuracy'],
+                    'val_category_acc': val_metrics['category_accuracy']
+                })
+                
+                # Early stopping check
+                if patience_counter >= self.early_stopping_patience:
+                    print(f"\nEarly stopping triggered after {epoch + 1} epochs!")
+                    break
+                
+            except Exception as e:
+                print(f"Error in epoch {epoch + 1}: {e}")
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+                print("Attempting to continue training...")
+                continue
             
             # Memory cleanup
             gc.collect()
@@ -694,22 +767,22 @@ def main():
     """
     print("=== Lightweight FinBERT ESG Training ===")
     
-    # Initialize trainer with optimized settings
+    # Initialize trainer with GPU-optimized settings
     trainer = LightweightTrainer(
         model_name='ProsusAI/finbert',
         max_length=128,           # Optimal sequence length
         learning_rate=2e-5,       # Optimized learning rate
-        batch_size=2,             # Increased batch size
+        batch_size=8,             # GPU-optimized batch size
         num_epochs=3,             # Extended training
-        gradient_accumulation_steps=8,  # Effective batch size of 16
+        gradient_accumulation_steps=2,  # Effective batch size of 16
         early_stopping_patience=3  # Early stopping patience
     )
     
-    # Load data
+    # Load data with standardized filenames
     trainer.load_data(
-        train_path='data/annotations/esg_train_set_20250820_195723.csv',
-        val_path='data/annotations/esg_validation_set_20250820_195723.csv',
-        test_path='data/annotations/esg_test_set_20250820_195723.csv'
+        train_path='data/annotations/esg_train_set.csv',
+        val_path='data/annotations/esg_validation_set.csv',
+        test_path='data/annotations/esg_test_set.csv'
     )
     
     # Initialize model

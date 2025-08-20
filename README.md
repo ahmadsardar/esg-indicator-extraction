@@ -1,17 +1,17 @@
 # FinBERT-ESG: Multi-Task ESG Information Extraction from Corporate Reports
 
 ## Thesis Overview
-**Title**: Context-Aware ESG Information Extraction from Corporate Reports using Domain-Specific Language Models
-**Type**: Bachelor Thesis (6000 words)
-**Duration**: 6 weeks (accelerated timeline)
+**Title**: ESG Information Extraction from Corporate Reports: A Comparative Analysis of Fine-tuned FinBERT vs. Base Models 
+**Type**: Bachelor Thesis
 **Approach**: Fine-tuned FinBERT with lightweight multi-task architecture for ESG indicator classification, numerical data extraction, and category classification
 
 ## 🎯 Key Achievements
-- **ESG Indicator Detection**: 47% F1-score (292% improvement over base FinBERT)
-- **Category Classification**: 33% F1-score (51% improvement over base FinBERT)
+- **ESG Indicator Detection**: 42.53% F1-score (macro average across 47 indicators)
+- **Numerical Data Detection**: 93.94% F1-score (+56.3% improvement over base FinBERT)
+- **Category Classification**: 31.19% F1-score (+16.9% improvement over base FinBERT)
 - **Multi-task Learning**: Simultaneous ESG classification, numerical extraction, and categorization
-- **Lightweight Architecture**: Memory-efficient model with frozen early layers
-- **Comprehensive Evaluation**: Statistical comparison with baseline models and visualization
+- **Lightweight Architecture**: Memory-efficient model with frozen early layers (best validation F1: 0.0340)
+- **Comprehensive Evaluation**: Statistical comparison with baseline models and detailed performance analysis
 
 ## Project Structure
 ```
@@ -73,7 +73,7 @@ Project/
 ### 2. Model Architecture
 - **Base Model**: FinBERT (Financial domain pre-trained BERT)
 - **Multi-task Heads**: 
-  - ESG Indicator Classification (40 indicators)
+  - ESG Indicator Classification (47 indicators)
   - Numerical Data Detection (binary)
   - ESG Category Classification (multi-class)
 - **Lightweight Design**: Frozen early layers for memory efficiency
@@ -97,30 +97,19 @@ Project/
 
 | Task | Base FinBERT F1 | Fine-tuned F1 | Improvement |
 |------|----------------|---------------|-------------|
-| **ESG Indicator Detection** | 0.12 | **0.47** | **+292%** |
-| **Category Classification** | 0.22 | **0.33** | **+51%** |
-| **Numerical Detection** | 0.32 | 0.20 | -37% |
+| **ESG Indicator Detection** | 0.5325 | **0.4253** | **-10.7%** |
+| **Numerical Data Detection** | 0.3763 | **0.9394** | **+56.3%** |
+| **Category Classification** | 0.1429 | **0.3119** | **+16.9%** |
 
 ### Key Findings
-- ✅ **Significant improvement** in ESG-specific tasks
+- ✅ **Exceptional improvement** in numerical data detection (93.94% F1-score)
+- ✅ **Significant improvement** in ESG category classification (+16.9%)
 - ✅ **Multi-task learning** effectively combines related objectives
-- ✅ **Domain adaptation** substantially outperforms general models
-- ⚠️ **Trade-off observed** in numerical detection (requires further investigation)
+- ⚠️ **Trade-off observed** in ESG indicator detection (-10.7%, requires further investigation)
+- ✅ **Memory-efficient architecture** suitable for production deployment
+- ✅ **Comprehensive evaluation** with detailed performance metrics and comparison reports
 
 ## 🚀 Quick Start
-
-### Installation
-```bash
-# Clone the repository
-git clone <repository-url>
-cd Project
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Download required models (if not included)
-python -c "from transformers import AutoModel; AutoModel.from_pretrained('ProsusAI/finbert')"
-```
 
 ### Running the Pipeline
 
@@ -149,7 +138,7 @@ python src/09_model_comparison_evaluation.py
 - **`docs/`**: Detailed documentation and guidelines
 
 ## ESG Indicators Framework
-**Comprehensive Indicator Set**: 40 indicators across three categories
+**Comprehensive Indicator Set**: 47 indicators across three categories
 
 ### Environmental (E)
 - Carbon emissions and climate metrics
@@ -179,12 +168,12 @@ class LightweightESGModel(nn.Module):
         self.bert = AutoModel.from_pretrained('ProsusAI/finbert')
         
         # Multi-task heads
-        self.indicator_output = nn.Linear(768, 40)  # ESG indicators
+        self.indicator_output = nn.Linear(768, 47)  # ESG indicators
         self.numerical_output = nn.Linear(768, 1)   # Numerical detection
         self.category_output = nn.Linear(768, num_categories)  # Categories
         
         # Residual connections for enhanced learning
-        self.indicator_residual = nn.Linear(768, 40)
+        self.indicator_residual = nn.Linear(768, 47)
         self.numerical_residual = nn.Linear(768, 1)
         self.category_residual = nn.Linear(768, num_categories)
 ```
@@ -192,7 +181,9 @@ class LightweightESGModel(nn.Module):
 ### Training Configuration
 - **Learning Rate**: 2e-5 with linear decay
 - **Batch Size**: 8 (with gradient accumulation)
-- **Epochs**: 10 with early stopping
+- **Epochs**: 3 (completed training)
+- **Final Training Loss**: 0.9198
+- **Best Validation F1**: 0.0340 (Indicators)
 - **Loss Function**: Weighted multi-task loss
 - **Optimizer**: AdamW with weight decay
 
@@ -205,9 +196,10 @@ class LightweightESGModel(nn.Module):
 4. **Comprehensive Evaluation**: Robust statistical analysis and visualization
 
 ### Areas for Improvement
-1. **Numerical Detection**: Performance trade-off requires investigation
+1. **ESG Indicator Detection**: Performance trade-off requires investigation (multi-task vs single-task)
 2. **Data Scale**: Larger annotated datasets could improve generalization
 3. **Category Granularity**: More fine-grained ESG subcategories
 4. **Cross-domain Evaluation**: Testing on different industry sectors
+5. **Threshold Optimization**: Fine-tune classification thresholds for better performance
 
 **Note**: This project demonstrates the practical application of domain-adapted language models for ESG information extraction, contributing to the growing field of sustainable finance and AI-driven ESG analysis.

@@ -80,15 +80,40 @@ class ESGAnnotationSystem:
         print(f"Loaded {len(df)} ESG indicators for annotation")
         return df
     
-    def load_existing_dataset(self) -> pd.DataFrame:
-        """Load the existing ESG training dataset"""
-        dataset_path = self.processed_dir / 'esg_training_dataset.csv'
-        if not dataset_path.exists():
-            raise FileNotFoundError(f"Training dataset not found at {dataset_path}")
+    def load_individual_datasets(self) -> Dict[str, pd.DataFrame]:
+        """Load individual ESG datasets from each corporate report"""
+        individual_reports_dir = self.processed_dir / 'individual_reports'
+        if not individual_reports_dir.exists():
+            raise FileNotFoundError(f"Individual reports directory not found at {individual_reports_dir}")
         
-        df = pd.read_csv(dataset_path)
-        print(f"Loaded existing dataset with {len(df)} text segments")
-        return df
+        datasets = {}
+        csv_files = list(individual_reports_dir.glob('*_esg_dataset.csv'))
+        
+        if not csv_files:
+            raise FileNotFoundError(f"No individual ESG datasets found in {individual_reports_dir}")
+        
+        for csv_file in csv_files:
+            # Extract report name from filename
+            report_name = csv_file.stem.replace('_esg_dataset', '')
+            df = pd.read_csv(csv_file)
+            df['document_id'] = report_name  # Add document identifier
+            datasets[report_name] = df
+            print(f"Loaded {report_name}: {len(df)} text segments")
+        
+        print(f"Total datasets loaded: {len(datasets)}")
+        return datasets
+    
+    def combine_datasets(self, datasets: Dict[str, pd.DataFrame]) -> pd.DataFrame:
+        """Combine individual datasets while preserving document information"""
+        combined_dfs = []
+        for report_name, df in datasets.items():
+            df_copy = df.copy()
+            df_copy['document_id'] = report_name
+            combined_dfs.append(df_copy)
+        
+        combined_df = pd.concat(combined_dfs, ignore_index=True)
+        print(f"Combined dataset: {len(combined_df)} total text segments from {len(datasets)} documents")
+        return combined_df
     
     def extract_numerical_values(self, text: str) -> List[Dict]:
         """Enhanced extraction of numerical values and their units from text"""
@@ -408,6 +433,7 @@ class ESGAnnotationSystem:
                 'original_framework': row.get('framework', ''),
                 'original_match_score': row.get('match_score', 0),
                 'report_name': row.get('report_name', ''),
+                'document_id': row.get('document_id', ''),  # Preserve document ID for document-level splits
                 
                 # Enhanced numerical annotations
                 'numerical_values': json.dumps(numerical_values),
@@ -584,60 +610,94 @@ class ESGAnnotationSystem:
         
         return min(weight, 2.0)  # Cap at 2.0
     
-    def create_training_splits(self, df: pd.DataFrame) -> Dict[str, pd.DataFrame]:
-        """Create enhanced training, validation, and test splits with improved stratification"""
-        # Create comprehensive stratification key
-        df['stratify_key'] = (
-            df['primary_category'] + '_' + 
-            df['annotation_quality'] + '_' + 
-            df['has_numerical_data'].astype(str)
-        )
+    def create_document_level_splits(self, df: pd.DataFrame) -> Dict[str, pd.DataFrame]:
+        """Create document-level training, validation, and test splits to prevent data leakage"""
+        # Get unique documents
+        unique_documents = df['document_id'].unique()
+        print(f"Found {len(unique_documents)} unique documents for splitting")
         
-        # Sort by training weight and confidence score for optimal distribution
-        df_sorted = df.sort_values(['training_weight', 'confidence_score'], ascending=[False, False])
+        # Calculate document-level statistics for stratification
+        doc_stats = []
+        for doc_id in unique_documents:
+            doc_df = df[df['document_id'] == doc_id]
+            
+            # Calculate document characteristics for stratification
+            high_quality_ratio = len(doc_df[doc_df['annotation_quality'] == 'high']) / len(doc_df)
+            numerical_ratio = len(doc_df[doc_df['has_numerical_data']]) / len(doc_df)
+            avg_confidence = doc_df['confidence_score'].mean()
+            total_segments = len(doc_df)
+            
+            # Create stratification key based on document characteristics
+            quality_tier = 'high' if high_quality_ratio > 0.6 else ('medium' if high_quality_ratio > 0.3 else 'low')
+            numerical_tier = 'high' if numerical_ratio > 0.3 else ('medium' if numerical_ratio > 0.1 else 'low')
+            size_tier = 'large' if total_segments > 500 else ('medium' if total_segments > 200 else 'small')
+            
+            doc_stats.append({
+                'document_id': doc_id,
+                'total_segments': total_segments,
+                'high_quality_ratio': high_quality_ratio,
+                'numerical_ratio': numerical_ratio,
+                'avg_confidence': avg_confidence,
+                'quality_tier': quality_tier,
+                'numerical_tier': numerical_tier,
+                'size_tier': size_tier,
+                'stratify_key': f"{quality_tier}_{numerical_tier}_{size_tier}"
+            })
         
-        # Enhanced split strategy: prioritize high-quality samples in training
-        high_quality = df_sorted[df_sorted['annotation_quality'] == 'high']
-        medium_quality = df_sorted[df_sorted['annotation_quality'] == 'medium']
-        low_quality = df_sorted[df_sorted['annotation_quality'] == 'low']
+        doc_stats_df = pd.DataFrame(doc_stats)
         
-        # Split ratios: 70% train, 15% validation, 15% test
-        # But ensure high-quality samples are well-distributed
-        train_dfs = []
-        val_dfs = []
-        test_dfs = []
+        # Sort documents by average confidence and quality for optimal distribution
+        doc_stats_df = doc_stats_df.sort_values(['avg_confidence', 'high_quality_ratio'], ascending=[False, False])
         
-        for quality_df in [high_quality, medium_quality, low_quality]:
-            if len(quality_df) > 0:
-                n_total = len(quality_df)
-                n_train = int(0.7 * n_total)
-                n_val = int(0.15 * n_total)
+        # Document-level split: 70% train, 15% validation, 15% test
+        n_docs = len(unique_documents)
+        n_train_docs = max(1, int(0.7 * n_docs))
+        n_val_docs = max(1, int(0.15 * n_docs)) if n_docs > 2 else 0
+        n_test_docs = n_docs - n_train_docs - n_val_docs
+        
+        # Ensure minimum documents in each split
+        if n_docs < 3:
+            print(f"Warning: Only {n_docs} documents available. Using all for training.")
+            train_docs = doc_stats_df['document_id'].tolist()
+            val_docs = []
+            test_docs = []
+        else:
+            # Stratified document assignment to maintain distribution balance
+            train_docs = []
+            val_docs = []
+            test_docs = []
+            
+            # Group documents by stratification key for balanced splitting
+            for strat_key in doc_stats_df['stratify_key'].unique():
+                strat_docs = doc_stats_df[doc_stats_df['stratify_key'] == strat_key]['document_id'].tolist()
+                n_strat = len(strat_docs)
                 
-                # Ensure minimum samples in each split for small groups
-                if n_total < 10:
-                    if n_total >= 3:
-                        n_train = max(1, n_total - 2)
-                        n_val = 1
-                        n_test = n_total - n_train - n_val
+                if n_strat == 1:
+                    train_docs.extend(strat_docs)
+                elif n_strat == 2:
+                    train_docs.append(strat_docs[0])
+                    if len(val_docs) < n_val_docs:
+                        val_docs.append(strat_docs[1])
                     else:
-                        n_train = n_total
-                        n_val = 0
-                        n_test = 0
+                        test_docs.append(strat_docs[1])
                 else:
-                    n_test = n_total - n_train - n_val
-                
-                train_dfs.append(quality_df[:n_train])
-                if n_val > 0:
-                    val_dfs.append(quality_df[n_train:n_train + n_val])
-                if n_test > 0:
-                    test_dfs.append(quality_df[n_train + n_val:])
+                    # Proportional split within stratification group
+                    n_train_strat = max(1, int(0.7 * n_strat))
+                    n_val_strat = int(0.15 * n_strat) if n_strat > 2 else 0
+                    n_test_strat = n_strat - n_train_strat - n_val_strat
+                    
+                    train_docs.extend(strat_docs[:n_train_strat])
+                    if n_val_strat > 0:
+                        val_docs.extend(strat_docs[n_train_strat:n_train_strat + n_val_strat])
+                    if n_test_strat > 0:
+                        test_docs.extend(strat_docs[n_train_strat + n_val_strat:])
         
-        # Combine splits
-        train_df = pd.concat(train_dfs, ignore_index=True) if train_dfs else pd.DataFrame()
-        val_df = pd.concat(val_dfs, ignore_index=True) if val_dfs else pd.DataFrame()
-        test_df = pd.concat(test_dfs, ignore_index=True) if test_dfs else pd.DataFrame()
+        # Create final splits based on document assignment
+        train_df = df[df['document_id'].isin(train_docs)].copy()
+        val_df = df[df['document_id'].isin(val_docs)].copy() if val_docs else pd.DataFrame()
+        test_df = df[df['document_id'].isin(test_docs)].copy() if test_docs else pd.DataFrame()
         
-        # Shuffle within each split while maintaining quality distribution
+        # Shuffle within each split while maintaining document integrity
         if len(train_df) > 0:
             train_df = train_df.sample(frac=1, random_state=42).reset_index(drop=True)
         if len(val_df) > 0:
@@ -645,10 +705,25 @@ class ESGAnnotationSystem:
         if len(test_df) > 0:
             test_df = test_df.sample(frac=1, random_state=42).reset_index(drop=True)
         
+        # Print split summary
+        print(f"\nDocument-level split summary:")
+        print(f"Training: {len(train_docs)} documents, {len(train_df)} segments")
+        print(f"Validation: {len(val_docs)} documents, {len(val_df)} segments")
+        print(f"Test: {len(test_docs)} documents, {len(test_df)} segments")
+        
+        print(f"\nTraining documents: {train_docs}")
+        print(f"Validation documents: {val_docs}")
+        print(f"Test documents: {test_docs}")
+        
         return {
             'train': train_df,
             'validation': val_df,
-            'test': test_df
+            'test': test_df,
+            'document_splits': {
+                'train_docs': train_docs,
+                'val_docs': val_docs,
+                'test_docs': test_docs
+            }
         }
     
     def generate_annotation_statistics(self, df: pd.DataFrame, splits: Dict[str, pd.DataFrame]) -> Dict:
@@ -746,12 +821,14 @@ class ESGAnnotationSystem:
         # Training splits analysis
         split_stats = {}
         for split_name, split_df in splits.items():
-            if len(split_df) > 0:
+            if split_name == 'document_splits':  # Skip document splits metadata
+                continue
+            if len(split_df) > 0 and 'annotation_quality' in split_df.columns:
                 split_stats[f'{split_name}_samples'] = len(split_df)
                 split_stats[f'{split_name}_quality'] = split_df['annotation_quality'].value_counts().to_dict()
-                split_stats[f'{split_name}_numerical'] = len(split_df[split_df['has_numerical_data']])
-                split_stats[f'{split_name}_indicators'] = len(split_df[split_df['is_esg_relevant']])
-                split_stats[f'{split_name}_avg_confidence'] = split_df['confidence_score'].mean()
+                split_stats[f'{split_name}_numerical'] = len(split_df[split_df['has_numerical_data']]) if 'has_numerical_data' in split_df.columns else 0
+                split_stats[f'{split_name}_indicators'] = len(split_df[split_df['is_esg_relevant']]) if 'is_esg_relevant' in split_df.columns else 0
+                split_stats[f'{split_name}_avg_confidence'] = split_df['confidence_score'].mean() if 'confidence_score' in split_df.columns else 0
             else:
                 split_stats[f'{split_name}_samples'] = 0
                 split_stats[f'{split_name}_quality'] = {}
@@ -783,78 +860,108 @@ class ESGAnnotationSystem:
         return stats
     
     def save_annotations(self, enhanced_df: pd.DataFrame, splits: Dict[str, pd.DataFrame], stats: Dict):
-        """Save all annotation results"""
+        """Save all annotation results with standardized filenames (no timestamps)"""
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         
-        # Save complete enhanced dataset
-        enhanced_path = self.annotations_dir / f'enhanced_esg_annotations_{timestamp}.csv'
+        # Save complete enhanced dataset with standardized name
+        enhanced_path = self.annotations_dir / 'enhanced_esg_annotations.csv'
         enhanced_df.to_csv(enhanced_path, index=False)
         print(f"Enhanced annotations saved to: {enhanced_path}")
         
-        # Save training splits
-        for split_name, split_df in splits.items():
-            split_path = self.annotations_dir / f'esg_{split_name}_set_{timestamp}.csv'
-            split_df.to_csv(split_path, index=False)
-            print(f"{split_name.capitalize()} set saved to: {split_path}")
+        # Save training splits with standardized names (only non-empty ones)
+        files_created = {'enhanced_annotations': str(enhanced_path)}
         
-        # Save statistics
-        stats_path = self.annotations_dir / f'annotation_statistics_{timestamp}.json'
+        for split_name, split_df in splits.items():
+            if split_name == 'document_splits':  # Skip the document split metadata
+                continue
+            if isinstance(split_df, pd.DataFrame) and len(split_df) > 0:
+                split_path = self.annotations_dir / f'esg_{split_name}_set.csv'
+                split_df.to_csv(split_path, index=False)
+                print(f"{split_name.capitalize()} set saved to: {split_path}")
+                files_created[f'{split_name}_set'] = str(split_path)
+            else:
+                print(f"Warning: {split_name} set is empty, skipping save")
+        
+        # Save document split information with standardized name
+        if 'document_splits' in splits:
+            doc_splits_path = self.annotations_dir / 'document_splits.json'
+            with open(doc_splits_path, 'w') as f:
+                json.dump(splits['document_splits'], f, indent=2)
+            print(f"Document splits saved to: {doc_splits_path}")
+            files_created['document_splits'] = str(doc_splits_path)
+        
+        # Save statistics with standardized name
+        stats_path = self.annotations_dir / 'annotation_statistics.json'
         with open(stats_path, 'w') as f:
             json.dump(stats, f, indent=2, default=str)
         print(f"Statistics saved to: {stats_path}")
+        files_created['statistics'] = str(stats_path)
         
         # Save annotation summary
         summary = {
             'timestamp': timestamp,
             'total_samples_annotated': len(enhanced_df),
-            'training_samples': len(splits['train']),
-            'validation_samples': len(splits['validation']),
-            'test_samples': len(splits['test']),
+            'training_samples': len(splits['train']) if 'train' in splits and len(splits['train']) > 0 else 0,
+            'validation_samples': len(splits['validation']) if 'validation' in splits and len(splits['validation']) > 0 else 0,
+            'test_samples': len(splits['test']) if 'test' in splits and len(splits['test']) > 0 else 0,
             'annotation_quality_high': len(enhanced_df[enhanced_df['annotation_quality'] == 'high']),
             'samples_with_numerical_data': len(enhanced_df[enhanced_df['has_numerical_data']]),
             'unique_indicators_found': enhanced_df['best_match_indicator'].nunique(),
-            'files_created': {
-                'enhanced_annotations': str(enhanced_path),
-                'train_set': str(self.annotations_dir / f'esg_train_set_{timestamp}.csv'),
-                'validation_set': str(self.annotations_dir / f'esg_validation_set_{timestamp}.csv'),
-                'test_set': str(self.annotations_dir / f'esg_test_set_{timestamp}.csv'),
-                'statistics': str(stats_path)
-            }
+            'unique_documents': enhanced_df['document_id'].nunique(),
+            'document_level_splitting': True,
+            'files_created': files_created
         }
         
-        summary_path = self.annotations_dir / f'annotation_summary_{timestamp}.json'
+        # Add document split summary if available
+        if 'document_splits' in splits:
+            doc_splits = splits['document_splits']
+            summary['document_split_summary'] = {
+                'train_documents': len(doc_splits['train_docs']),
+                'validation_documents': len(doc_splits['val_docs']),
+                'test_documents': len(doc_splits['test_docs']),
+                'train_docs': doc_splits['train_docs'],
+                'val_docs': doc_splits['val_docs'],
+                'test_docs': doc_splits['test_docs']
+            }
+        
+        summary_path = self.annotations_dir / 'annotation_summary.json'
         with open(summary_path, 'w') as f:
             json.dump(summary, f, indent=2)
         print(f"Annotation summary saved to: {summary_path}")
+        files_created['summary'] = str(summary_path)
         
         return summary
 
 def main():
-    """Main annotation process"""
-    print("=== ESG ANNOTATION SYSTEM ===")
+    """Main annotation process with document-level splitting"""
+    print("=== ESG ANNOTATION SYSTEM (Document-Level Splitting) ===")
     print(f"Starting annotation process at {datetime.now()}")
     
     # Initialize annotation system
     annotator = ESGAnnotationSystem()
     
-    # Load existing dataset
-    print("\n1. Loading existing ESG dataset...")
-    existing_df = annotator.load_existing_dataset()
+    # Load individual datasets
+    print("\n1. Loading individual ESG datasets...")
+    individual_datasets = annotator.load_individual_datasets()
+    
+    # Combine datasets while preserving document information
+    print("\n2. Combining datasets with document tracking...")
+    combined_df = annotator.combine_datasets(individual_datasets)
     
     # Create enhanced annotations
-    print("\n2. Creating enhanced annotations...")
-    enhanced_df = annotator.create_enhanced_annotations(existing_df)
+    print("\n3. Creating enhanced annotations...")
+    enhanced_df = annotator.create_enhanced_annotations(combined_df)
     
-    # Create training splits
-    print("\n3. Creating training splits...")
-    splits = annotator.create_training_splits(enhanced_df)
+    # Create document-level training splits
+    print("\n4. Creating document-level training splits...")
+    splits = annotator.create_document_level_splits(enhanced_df)
     
     # Generate annotation statistics
-    print("\n4. Generating annotation statistics...")
+    print("\n5. Generating annotation statistics...")
     stats = annotator.generate_annotation_statistics(enhanced_df, splits)
     
     # Save all results
-    print("\n5. Saving annotation results...")
+    print("\n6. Saving annotation results...")
     summary = annotator.save_annotations(enhanced_df, splits, stats)
     
     # Print summary

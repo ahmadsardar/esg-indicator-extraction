@@ -55,6 +55,7 @@ Thumbs.db
 *.h5
 *.pkl
 *.joblib
+*.safetensors
 
 # Data files (if large)
 # Uncomment if you have large datasets
@@ -65,10 +66,86 @@ Thumbs.db
 *.log
 *.out
 *.err
+logs/
+runs/
+wandb/
 
 # Temporary files
 *.tmp
 *.temp
+*.bak
+*.backup
+
+# ESG-specific files
+# Uncomment to exclude sensitive corporate data
+# data/raw/*.pdf
+# data/annotations/*.csv
+# results/comparison/*.json
+
+# Training checkpoints and intermediate files
+checkpoints/
+models/*/checkpoint-*/
+models/*/pytorch_model.bin
+models/*/model.safetensors
+
+# Experiment tracking
+mlruns/
+tensorboard_logs/
+experiments/
+
+# Large result files
+results/analysis_plots/*.png
+results/analysis_plots/*.jpg
+results/analysis_plots/*.svg
+
+# Configuration files with sensitive data
+config.yaml
+secrets.json
+.secrets
+
+# System-specific files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# IDE and editor files
+.vscode/settings.json
+.idea/workspace.xml
+*.sublime-workspace
+
+# Jupyter notebook outputs
+*.ipynb
+!notebooks/*.ipynb
+
+# Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Distribution and packaging
+build/
+dist/
+*.egg-info/
+*.whl
+
+# Virtual environments
+venv/
+env/
+.env
+.venv
+conda-meta/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Documentation
+docs/_build/
+site/
 
 # Environment variables
 .env

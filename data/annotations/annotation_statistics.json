@@ -1,0 +1,177 @@
+{
+  "dataset_overview": {
+    "total_samples": 15312,
+    "samples_with_numerical_data": 7778,
+    "samples_with_indicators": 13045,
+    "average_confidence_score": 0.13564998691001331
+  },
+  "quality_analysis": {
+    "distribution": {
+      "medium": 6963,
+      "high": 6941,
+      "low": 1408
+    },
+    "high_quality_percentage": 45.33045977011494,
+    "training_ready_percentage": 90.80459770114942
+  },
+  "numerical_analysis": {
+    "total_values_extracted": "37969",
+    "samples_with_numerical": 7778,
+    "percentage_with_numerical": 50.79676071055381,
+    "avg_values_per_sample": 2.479689132706374,
+    "samples_with_multiple_values": 5411,
+    "average_numerical_confidence": 0.461111993884391,
+    "high_confidence_numerical": 7566,
+    "value_type_distribution": {
+      "mass": 1847,
+      "emissions": 239,
+      "financial": 1068,
+      "percentage": 54,
+      "energy": 52,
+      "waste": 51,
+      "volume": 47,
+      "target": 414,
+      "workforce": 249,
+      "general": 6961
+    }
+  },
+  "indicator_analysis": {
+    "samples_with_indicators": 13045,
+    "percentage_with_indicators": 85.19461859979101,
+    "avg_matches_per_sample": 2.8505094043887147,
+    "samples_with_multiple_matches": 10669,
+    "unique_indicators_matched": 50,
+    "average_best_match_score": 0.13564998691001331,
+    "high_quality_matches": 5193,
+    "match_quality_distribution": {
+      "medium": 7362,
+      "high": 5164,
+      "none": 2267,
+      "low": 519
+    }
+  },
+  "text_analysis": {
+    "average_text_length": 485.49653866248696,
+    "average_complexity_score": 0.5892459497993222,
+    "high_complexity_samples": 1105,
+    "text_length_distribution": {
+      "short_texts_(<200)": 382,
+      "medium_texts_(200-1000)": 14313,
+      "long_texts_(>1000)": 617
+    }
+  },
+  "training_analysis": {
+    "training_ready_samples": 13904,
+    "percentage_training_ready": 90.80459770114942,
+    "average_training_weight": 1.0633774294670848,
+    "high_weight_samples": 6943
+  },
+  "category_analysis": {
+    "distribution": {
+      "Environmental": 6770,
+      "Governance": 5007,
+      "Social": 3535
+    },
+    "subcategory_distribution": {
+      "Supply Chain": 2097,
+      "Employee Relations": 1461,
+      "Climate Impact": 1419,
+      "Executive Compensation": 1322,
+      "Health and Safety": 1159,
+      "Innovation": 801,
+      "ESG Performance": 511,
+      "Financial_Inclusion": 491,
+      "Climate Action": 448,
+      "Diversity and Inclusion": 425,
+      "Environmental_Mgmt._System": 374,
+      "Water Management": 327,
+      "Energy": 252,
+      "Employee Development": 237,
+      "Board_Diversity": 221,
+      "Water": 219,
+      "Energy Transition": 208,
+      "Resource Efficiency": 196,
+      "Diversity": 196,
+      "Energy Efficiency": 184,
+      "Data Security": 171,
+      "Taxes": 162,
+      "Non-GHG_Air_Emissions": 160,
+      "Employee_Development": 154,
+      "Health_and_Safety": 144,
+      "Regulatory Compliance": 139,
+      "Climate Change": 117,
+      "Waste": 115,
+      "Biodiversity": 114,
+      "Financial Performance": 105,
+      "Customer Relations": 93,
+      "Corruption": 87,
+      "Sustainable_Finance": 85,
+      "Green_Products": 83,
+      "Human Rights": 83,
+      "Board Composition": 83,
+      "Human_Rights": 80,
+      "Corporate_Governance": 78,
+      "Energy Infrastructure": 69,
+      "Remuneration": 65,
+      "Environmental_Policy": 59,
+      "Green_Buildings": 57,
+      "Product_Safety": 54,
+      "Operational Efficiency": 51,
+      "Transparency": 31,
+      "Community_and_Society": 28,
+      "Resource_Efficiency": 27,
+      "Child_Labor": 27,
+      "Health & Safety": 25,
+      "EnergyEfficiency": 24,
+      "Data Privacy": 21,
+      "Labor_Practices": 19,
+      "Ethics & Compliance": 19,
+      "Privacy_and_IT": 17,
+      "Employment": 17,
+      "Climate_Risk_Mgmt.": 17,
+      "Customer_Relationship": 17,
+      "Environmental_Fines": 16,
+      "Risk Management": 12,
+      "ESG_Incentives": 11,
+      "Collective_Bargaining": 8,
+      "Community Relations": 6,
+      "Training & Development": 4,
+      "Diversity & Inclusion": 4,
+      "Ozone-Depleting_Gases": 3,
+      "Hazardous_Waste": 1,
+      "GHG_Emissions": 1,
+      "Employee_Turnover": 1
+    },
+    "unique_categories": 3,
+    "unique_subcategories": 68
+  },
+  "training_splits": {
+    "train_samples": 11491,
+    "train_quality": {
+      "high": 5573,
+      "medium": 4950,
+      "low": 968
+    },
+    "train_numerical": 5759,
+    "train_indicators": 10178,
+    "train_avg_confidence": 0.1467550807045172,
+    "validation_samples": 1875,
+    "validation_quality": {
+      "medium": 991,
+      "high": 673,
+      "low": 211
+    },
+    "validation_numerical": 1003,
+    "validation_indicators": 1394,
+    "validation_avg_confidence": 0.10043153905399828,
+    "test_samples": 1946,
+    "test_quality": {
+      "medium": 1022,
+      "high": 695,
+      "low": 229
+    },
+    "test_numerical": 1016,
+    "test_indicators": 1473,
+    "test_avg_confidence": 0.10400864926221481
+  }
+}

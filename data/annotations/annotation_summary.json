@@ -1,0 +1,51 @@
+{
+  "timestamp": "20250821_003817",
+  "total_samples_annotated": 15312,
+  "training_samples": 11491,
+  "validation_samples": 1875,
+  "test_samples": 1946,
+  "annotation_quality_high": 6941,
+  "samples_with_numerical_data": 7778,
+  "unique_indicators_found": 50,
+  "unique_documents": 20,
+  "document_level_splitting": true,
+  "files_created": {
+    "enhanced_annotations": "data\\annotations\\enhanced_esg_annotations.csv",
+    "train_set": "data\\annotations\\esg_train_set.csv",
+    "validation_set": "data\\annotations\\esg_validation_set.csv",
+    "test_set": "data\\annotations\\esg_test_set.csv",
+    "document_splits": "data\\annotations\\document_splits.json",
+    "statistics": "data\\annotations\\annotation_statistics.json"
+  },
+  "document_split_summary": {
+    "train_documents": 13,
+    "validation_documents": 3,
+    "test_documents": 4,
+    "train_docs": [
+      "DHL_Group_2023_ESG_Presentation",
+      "bayer_tcfd_report_2023",
+      "sustainability_report_fy2023_peru",
+      "creating_shared_value_sustainability_report_2023_en",
+      "Non_Financial_Report_2023",
+      "bayer_sustainability_report_2023",
+      "sap_2024_integrated_report",
+      "sap_2023_integrated_report",
+      "DHL_Group_2023_Annual_Report",
+      "EON_2024_On_course_for_net_zero",
+      "bayer_sasb_index_2023",
+      "2023_Volkswagen_Group_Nachhaltigkeitsbericht",
+      "bayer_nachhaltigkeitsbericht_2023"
+    ],
+    "val_docs": [
+      "sap_2023_annual_report_form_20f",
+      "DHL_Group_list_of_shareholdings_2023_12_31",
+      "entire_dtag_gb23"
+    ],
+    "test_docs": [
+      "bayer_sustainability_highlight_report_2023",
+      "bayer_sfdr_index_2023",
+      "sap_2024_annual_report_form_20f",
+      "EON_GB2023_gesamt_dt_final"
+    ]
+  }
+}

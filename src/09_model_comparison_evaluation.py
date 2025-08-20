@@ -82,7 +82,7 @@ class LightweightESGModel(torch.nn.Module):
         self.indicator_bn1 = torch.nn.BatchNorm1d(256)
         self.indicator_hidden = torch.nn.Linear(256, 128)
         self.indicator_bn2 = torch.nn.BatchNorm1d(128)
-        self.indicator_output = torch.nn.Linear(128, 40)  # 40 indicators
+        self.indicator_output = torch.nn.Linear(128, 47)  # 47 indicators
         self.indicator_residual = torch.nn.Linear(self.hidden_size, 128)
         
         # Numerical Detection (matching training architecture)
@@ -489,7 +489,7 @@ class ModelComparator:
         
         if os.path.exists(finetuned_model_path):
             print(f"Loading fine-tuned model weights from {finetuned_model_path}")
-            checkpoint = torch.load(finetuned_model_path, map_location=self.device)
+            checkpoint = torch.load(finetuned_model_path, map_location=self.device, weights_only=False)
             finetuned_model.load_state_dict(checkpoint['model_state_dict'])
             print("✓ Fine-tuned model weights loaded successfully")
         else:
@@ -532,8 +532,8 @@ def main():
     """
     Main execution function
     """
-    # Configuration - use the same test set that was held out during training
-    test_data_path = 'data/annotations/esg_test_set_20250820_195723.csv'
+    # Configuration - use the available test set
+    test_data_path = 'data/annotations/esg_test_set.csv'
     
     # Check if test data exists
     if not os.path.exists(test_data_path):

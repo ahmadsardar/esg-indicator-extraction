@@ -1,43 +1,52 @@
 # Core ML and NLP libraries
-torch>=1.9.0
-transformers>=4.20.0
-datasets>=2.0.0
-tokenizers>=0.12.0
+torch>=2.0.0
+transformers>=4.30.0
+datasets>=2.12.0
+tokenizers>=0.13.0
 
 # Data processing
-pandas>=1.3.0
-numpy>=1.21.0
-scikit-learn>=1.0.0
+pandas>=2.0.0
+numpy>=1.24.0
+scikit-learn>=1.3.0
 
 # Ontology processing
-rdflib>=6.0.0
-owlready2>=0.39
+rdflib>=6.3.0
+owlready2>=0.44
 
 # Text processing
-spacy>=3.4.0
-nltk>=3.7
+spacy>=3.6.0
+nltk>=3.8
 
 # Evaluation and metrics
-seqeval>=1.2.0
-matplotlib>=3.5.0
-seaborn>=0.11.0
+seqeval>=1.2.2
+matplotlib>=3.7.0
+seaborn>=0.12.0
 
 # PDF processing for corporate reports
-PyPDF2>=2.10.0
-pdfplumber>=0.7.0
+PyPDF2>=3.0.0
+pdfplumber>=0.9.0
 
 # Jupyter notebooks
 jupyter>=1.0.0
-ipykernel>=6.0.0
+ipykernel>=6.22.0
 
 # Additional dependencies for training and evaluation
-tqdm>=4.64.0  # Progress bars
-wandb>=0.13.0  # Experiment tracking (optional)
-tensorboard>=2.9.0  # Training visualization
-plotly>=5.10.0  # Interactive visualizations
+tqdm>=4.65.0  # Progress bars
+wandb>=0.15.0  # Experiment tracking (optional)
+tensorboard>=2.13.0  # Training visualization
+plotly>=5.15.0  # Interactive visualizations
 
 # Memory and performance optimization
 psutil>=5.9.0  # System monitoring
+
+# Model serialization and compatibility
+pickle5>=0.0.12  # Enhanced pickle support
+joblib>=1.3.0  # Efficient model serialization
+
+# Additional utilities
+openpyxl>=3.1.0  # Excel file processing
+requests>=2.31.0  # HTTP requests
+pyyaml>=6.0  # YAML configuration files
 
 # Note: Built-in modules used (no installation required):
 # re, gc, json, os, sys, datetime, logging, warnings
@@ -45,3 +54,8 @@ psutil>=5.9.0  # System monitoring
 # Financial NLP models
 # Note: Install FinBERT via: pip install git+https://github.com/ProsusAI/finBERT.git
 # Or use: transformers library with 'ProsusAI/finbert' model name
+
+# Development and testing (optional)
+# pytest>=7.4.0  # Unit testing
+# black>=23.0.0  # Code formatting
+# flake8>=6.0.0  # Code linting
