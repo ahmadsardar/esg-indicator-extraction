@@ -30,5 +30,18 @@ pdfplumber>=0.7.0
 jupyter>=1.0.0
 ipykernel>=6.0.0
 
+# Additional dependencies for training and evaluation
+tqdm>=4.64.0  # Progress bars
+wandb>=0.13.0  # Experiment tracking (optional)
+tensorboard>=2.9.0  # Training visualization
+plotly>=5.10.0  # Interactive visualizations
+
+# Memory and performance optimization
+psutil>=5.9.0  # System monitoring
+
+# Note: Built-in modules used (no installation required):
+# re, gc, json, os, sys, datetime, logging, warnings
+
 # Financial NLP models
 # Note: Install FinBERT via: pip install git+https://github.com/ProsusAI/finBERT.git
+# Or use: transformers library with 'ProsusAI/finbert' model name

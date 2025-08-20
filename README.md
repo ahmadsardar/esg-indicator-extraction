@@ -1,10 +1,17 @@
-# Context-Aware ESG Information Extraction from Corporate Reports
+# FinBERT-ESG: Multi-Task ESG Information Extraction from Corporate Reports
 
 ## Thesis Overview
 **Title**: Context-Aware ESG Information Extraction from Corporate Reports using Domain-Specific Language Models
 **Type**: Bachelor Thesis (6000 words)
 **Duration**: 6 weeks (accelerated timeline)
-**Approach**: Fine-tuning FinBERT with context-aware capabilities for comprehensive ESG indicator extraction and recognition
+**Approach**: Fine-tuned FinBERT with lightweight multi-task architecture for ESG indicator classification, numerical data extraction, and category classification
+
+## 🎯 Key Achievements
+- **ESG Indicator Detection**: 47% F1-score (292% improvement over base FinBERT)
+- **Category Classification**: 33% F1-score (51% improvement over base FinBERT)
+- **Multi-task Learning**: Simultaneous ESG classification, numerical extraction, and categorization
+- **Lightweight Architecture**: Memory-efficient model with frozen early layers
+- **Comprehensive Evaluation**: Statistical comparison with baseline models and visualization
 
 ## Project Structure
 ```
@@ -13,26 +20,38 @@ Project/
 │   ├── raw/                           # Original corporate reports
 │   ├── processed/                     # Cleaned and preprocessed data
 │   ├── annotations/                   # Manual ESG indicator labels
-│   ├── ontology/                      # ESG ontology analysis
-│   ├── expanded_esg_indicators.json   # 46 comprehensive ESG indicators
-│   └── expanded_esg_indicators.csv    # ESG indicators in CSV format
+│   ├── indicators/                    # ESG indicator definitions
+│   └── validation/                    # Data validation results
 ├── docs/
-│   └── esg_annotation_guidelines.md  # Guidelines for ESG annotation
+│   ├── esg_annotation_guidelines.md  # Guidelines for ESG annotation
+│   ├── individual_datasets_guide.md  # Dataset-specific documentation
+│   └── ontology_indicators_summary.md # ESG ontology summary
 ├── models/
 │   ├── baseline/                      # Baseline extraction methods
-│   ├── finbert_esg/                   # Fine-tuned FinBERT model
+│   ├── finbert_esg/                   # Fine-tuned FinBERT model & tokenizer
+│   │   └── best_lightweight_model/    # Trained model weights (model.pt)
 │   └── evaluation/                    # Model evaluation scripts
-├── notebooks/
-│   └── 01_ontology_analysis.ipynb     # ESG ontology analysis notebook
 ├── src/
-│   ├── ontology_analyzer.py           # ESG ontology parsing and analysis
-│   ├── esg_indicators_expansion.py    # ESG framework expansion script
-│   └── context_aware_esg_model.py     # Context-aware extraction model
+│   ├── 01_ontology_analyzer.py        # ESG ontology parsing and analysis
+│   ├── 02_esg_indicators_expansion.py # ESG framework expansion
+│   ├── 03_combine_indicators.py       # Indicator combination logic
+│   ├── 04_context_aware_esg_model.py  # Context-aware extraction model
+│   ├── 05_corporate_report_processor.py # PDF processing pipeline
+│   ├── 06_esg_annotation_system.py    # Annotation system implementation
+│   ├── 07_annotation_validator.py     # Data validation and quality checks
+│   ├── 08_finbert_esg_lightweight.py  # FinBERT training script
+│   └── 09_model_comparison_evaluation.py # Model comparison and evaluation
 ├── results/
-│   ├── test_extraction_results.json   # Model test results
-│   └── analysis_plots/                # Performance visualization
+│   ├── analysis_plots/                # Performance visualization
+│   ├── comparison/                    # Model comparison results
+│   │   ├── performance_comparison.png # Performance charts
+│   │   ├── improvement_analysis.png   # Improvement analysis
+│   │   └── detailed_comparison_report_*.json # Detailed metrics
+│   ├── lightweight_training_history.json # Training progress
+│   └── test_extraction_results.json  # Model test results
 ├── .gitignore                         # Git ignore configuration
 ├── requirements.txt                   # Python dependencies
+├── esgontology.owl                    # ESG ontology definition
 └── README.md                          # Project documentation
 ```
 
@@ -40,69 +59,155 @@ Project/
 1. How effectively can domain-adapted LLMs extract numerical ESG indicators from corporate reports?
 2. What is the performance difference across Environmental, Social, and Governance categories?
 3. How does ontology-guided training improve extraction accuracy compared to baseline methods?
+4. Can multi-task learning simultaneously improve ESG classification and numerical extraction?
 
 ## Methodology
-1. **Data Preparation**: Manual annotation of ESG indicators in corporate reports
-2. **Model Selection**: Fine-tune FinBERT for ESG-specific Named Entity Recognition
-3. **Training**: Domain adaptation using annotated ESG indicators
-4. **Evaluation**: Performance comparison against baseline methods
+
+### 1. Data Preparation & Ontology Analysis
+- **ESG Ontology Processing**: Automated parsing of ESG frameworks using `01_ontology_analyzer.py`
+- **Indicator Expansion**: Extended ESG indicators from 46 to comprehensive framework via `02_esg_indicators_expansion.py`
+- **Data Integration**: Combined multiple ESG datasets using `03_combine_indicators.py`
+- **Annotation System**: Implemented systematic ESG labeling via `06_esg_annotation_system.py`
+- **Quality Validation**: Ensured data integrity using `07_annotation_validator.py`
+
+### 2. Model Architecture
+- **Base Model**: FinBERT (Financial domain pre-trained BERT)
+- **Multi-task Heads**: 
+  - ESG Indicator Classification (40 indicators)
+  - Numerical Data Detection (binary)
+  - ESG Category Classification (multi-class)
+- **Lightweight Design**: Frozen early layers for memory efficiency
+- **Residual Connections**: Enhanced feature learning with skip connections
+
+### 3. Training Pipeline
+- **Implementation**: `08_finbert_esg_lightweight.py`
+- **Multi-task Loss**: Weighted combination of classification losses
+- **Optimization**: AdamW optimizer with learning rate scheduling
+- **Memory Management**: Gradient accumulation and efficient batching
+- **Checkpointing**: Best model selection based on validation performance
+
+### 4. Evaluation Framework
+- **Comparative Analysis**: `09_model_comparison_evaluation.py`
+- **Baseline Comparison**: Base FinBERT vs Fine-tuned ESG model
+- **Metrics**: Accuracy, F1-score (micro/macro), Precision, Recall, AUC
+- **Statistical Analysis**: Performance improvements and significance testing
+- **Visualization**: Automated chart generation for thesis documentation
+
+## 📊 Results Summary
+
+| Task | Base FinBERT F1 | Fine-tuned F1 | Improvement |
+|------|----------------|---------------|-------------|
+| **ESG Indicator Detection** | 0.12 | **0.47** | **+292%** |
+| **Category Classification** | 0.22 | **0.33** | **+51%** |
+| **Numerical Detection** | 0.32 | 0.20 | -37% |
+
+### Key Findings
+- ✅ **Significant improvement** in ESG-specific tasks
+- ✅ **Multi-task learning** effectively combines related objectives
+- ✅ **Domain adaptation** substantially outperforms general models
+- ⚠️ **Trade-off observed** in numerical detection (requires further investigation)
+
+## 🚀 Quick Start
+
+### Installation
+```bash
+# Clone the repository
+git clone <repository-url>
+cd Project
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Download required models (if not included)
+python -c "from transformers import AutoModel; AutoModel.from_pretrained('ProsusAI/finbert')"
+```
+
+### Running the Pipeline
+
+1. **Data Processing**:
+```bash
+python src/01_ontology_analyzer.py
+python src/02_esg_indicators_expansion.py
+python src/03_combine_indicators.py
+```
+
+2. **Model Training**:
+```bash
+python src/08_finbert_esg_lightweight.py
+```
+
+3. **Model Evaluation**:
+```bash
+python src/09_model_comparison_evaluation.py
+```
+
+## 📁 Key Files
+
+- **`models/finbert_esg/best_lightweight_model/model.pt`**: Trained model weights
+- **`results/comparison/`**: Comprehensive evaluation results and visualizations
+- **`esgontology.owl`**: ESG ontology definition file
+- **`docs/`**: Detailed documentation and guidelines
 
 ## ESG Indicators Framework
-**Comprehensive Indicator Set**: 46 indicators across three categories
+**Comprehensive Indicator Set**: 40 indicators across three categories
 
-### Environmental (18 indicators)
-- GHG Emissions (Scope 1, 2, 3), Energy Efficiency, Renewable Energy Usage
-- Water Usage, Waste Reduction, Biodiversity Impact, Carbon Footprint
-- Environmental Compliance, Green Innovation, Resource Efficiency
-- Climate Risk Assessment, Pollution Control, Sustainable Supply Chain
-- Environmental Management Systems, Land Use, Circular Economy
+### Environmental (E)
+- Carbon emissions and climate metrics
+- Energy efficiency and renewable energy
+- Water usage and waste management
+- Biodiversity and environmental impact
 
-### Social (16 indicators)
-- Employee Diversity, Health & Safety, Training & Development
-- Human Rights, Community Impact, Customer Satisfaction
-- Labor Relations, Fair Wages, Work-Life Balance
-- Product Safety, Social Innovation, Stakeholder Engagement
-- Data Privacy, Supply Chain Labor, Accessibility, Local Employment
+### Social (S)
+- Employee welfare and diversity
+- Community engagement and human rights
+- Product safety and customer satisfaction
+- Supply chain responsibility
 
-### Governance (12 indicators)
-- Board Composition, Executive Compensation, Audit Quality
-- Risk Management, Ethics & Compliance, Transparency
-- Shareholder Rights, Cybersecurity, Anti-Corruption
-- Regulatory Compliance, Stakeholder Governance, Business Ethics
+### Governance (G)
+- Board composition and independence
+- Executive compensation and ethics
+- Risk management and compliance
+- Transparency and stakeholder engagement
 
-**Sources**: GRI Standards, SASB Framework, TCFD Recommendations, EU Taxonomy, UN SDGs, Original Ontology
+## 🔬 Technical Implementation Details
 
-## Timeline (6 Weeks)
-- **Week 1**: Literature review, ontology analysis, and ESG framework expansion ✅
-- **Week 2**: Context-aware model development and dataset preparation 🔄
-- **Week 3**: FinBERT fine-tuning and model training
-- **Week 4**: Implementation and system integration
-- **Week 5**: Evaluation, testing, and performance analysis
-- **Week 6**: Thesis writing and documentation
+### Model Architecture
+```python
+class LightweightESGModel(nn.Module):
+    def __init__(self):
+        # FinBERT base with frozen early layers
+        self.bert = AutoModel.from_pretrained('ProsusAI/finbert')
+        
+        # Multi-task heads
+        self.indicator_output = nn.Linear(768, 40)  # ESG indicators
+        self.numerical_output = nn.Linear(768, 1)   # Numerical detection
+        self.category_output = nn.Linear(768, num_categories)  # Categories
+        
+        # Residual connections for enhanced learning
+        self.indicator_residual = nn.Linear(768, 40)
+        self.numerical_residual = nn.Linear(768, 1)
+        self.category_residual = nn.Linear(768, num_categories)
+```
 
-## Key Deliverables
-1. **Expanded ESG Framework**: 46 comprehensive indicators with academic sources
-2. **Context-Aware Model**: Advanced extraction system recognizing both known and new ESG indicators
-3. **Annotated Dataset**: Labeled training data from corporate reports
-4. **Fine-tuned FinBERT**: Domain-adapted model for ESG-specific extraction
-5. **Performance Evaluation**: Comprehensive analysis and baseline comparisons
-6. **Complete Thesis**: 6000-word academic documentation
+### Training Configuration
+- **Learning Rate**: 2e-5 with linear decay
+- **Batch Size**: 8 (with gradient accumulation)
+- **Epochs**: 10 with early stopping
+- **Loss Function**: Weighted multi-task loss
+- **Optimizer**: AdamW with weight decay
 
-## Current Progress
-### ✅ Completed
-- Literature review and background research
-- ESG ontology analysis (esgontology.owl)
-- **ESG indicators expansion** (2 → 46 indicators with GRI, SASB, TCFD sources)
-- **Context-aware model development** with semantic similarity and pattern recognition
-- Project structure and documentation setup
-- Git repository initialization
+## 📈 Performance Analysis
 
-### 🔄 In Progress
-- Dataset preparation from corporate reports
-- Manual annotation for training data
+### Strengths
+1. **Domain Adaptation**: Significant improvement in ESG-specific tasks
+2. **Multi-task Learning**: Effective knowledge sharing between related tasks
+3. **Memory Efficiency**: Lightweight architecture suitable for production
+4. **Comprehensive Evaluation**: Robust statistical analysis and visualization
 
-### 📋 Upcoming
-- FinBERT fine-tuning implementation
-- Model training and optimization
-- Evaluation and performance analysis
-- Thesis writing and final documentation
+### Areas for Improvement
+1. **Numerical Detection**: Performance trade-off requires investigation
+2. **Data Scale**: Larger annotated datasets could improve generalization
+3. **Category Granularity**: More fine-grained ESG subcategories
+4. **Cross-domain Evaluation**: Testing on different industry sectors
+
+**Note**: This project demonstrates the practical application of domain-adapted language models for ESG information extraction, contributing to the growing field of sustainable finance and AI-driven ESG analysis.
