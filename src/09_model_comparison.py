@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Model Comparison Evaluation Script
 Compares base FinBERT model vs fine-tuned ESG FinBERT model performance

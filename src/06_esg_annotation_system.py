@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 ESG Annotation System
 Enhances existing ESG datasets with comprehensive labeling and annotation

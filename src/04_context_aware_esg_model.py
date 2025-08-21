@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Context-Aware ESG Indicator Extraction Model
 

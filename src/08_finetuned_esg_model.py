@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Lightweight FinBERT ESG Model for Memory-Constrained Training
 

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 ESG Annotation Validator
 Analyzes and validates the quality of ESG annotations for FinBERT training.

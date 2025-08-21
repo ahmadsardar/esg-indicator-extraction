@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Class Distribution Analysis for ESG Indicators
 

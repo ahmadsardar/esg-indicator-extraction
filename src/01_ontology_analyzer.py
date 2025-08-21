@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Enhanced ESG Ontology Analyzer
 Extracts comprehensive ESG indicators and concepts from the ontology for thesis research.
