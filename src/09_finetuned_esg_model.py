@@ -34,14 +34,38 @@ import gc
 import warnings
 import random
 from collections import Counter
+import hashlib
+import logging
+from datetime import datetime
+import platform
+import subprocess
+
+# Import context-aware capabilities
+import sys
+import os
+import importlib.util
+
+# Load the context-aware module dynamically (handles numbered file names)
+context_module_path = os.path.join(os.path.dirname(__file__), "04_context_aware_esg_model.py")
+spec = importlib.util.spec_from_file_location("context_aware_esg_model", context_module_path)
+context_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(context_module)
+
+# Import the required classes and functions
+ESGContextAwareModule = context_module.ESGContextAwareModule
+ESGSemanticEnhancer = context_module.ESGSemanticEnhancer
+ContextAwareTrainingMixin = context_module.ContextAwareTrainingMixin
+create_context_aware_enhancement = context_module.create_context_aware_enhancement
+
 warnings.filterwarnings('ignore')
 
 class LightweightESGModel(nn.Module):
     """
-    Lightweight ESG model with minimal memory footprint
+    Context-aware lightweight ESG model with minimal memory footprint
     """
     
-    def __init__(self, model_name='ProsusAI/finbert', num_indicators=50, dropout_rate=0.3):
+    def __init__(self, model_name='ProsusAI/finbert', num_indicators=50, dropout_rate=0.4, 
+                 enable_context_awareness=True):
         super(LightweightESGModel, self).__init__()
         
         # Load FinBERT with minimal configuration
@@ -60,6 +84,15 @@ class LightweightESGModel(nn.Module):
         self.hidden_size = self.config.hidden_size
         self.num_indicators = num_indicators
         self.dropout = nn.Dropout(dropout_rate)
+        self.enable_context_awareness = enable_context_awareness
+        
+        # Initialize context-aware module
+        if self.enable_context_awareness:
+            self.context_module = create_context_aware_enhancement(
+                hidden_size=self.hidden_size,
+                context_dim=128,
+                dropout_rate=dropout_rate
+            )
         
         # Enhanced task heads with residual connections
         # 1. ESG Indicator Classification (primary task)
@@ -88,18 +121,34 @@ class LightweightESGModel(nn.Module):
     
     def forward(self, input_ids, attention_mask):
         """
-        Forward pass with memory optimization
+        Forward pass with context-aware enhancement and memory optimization
         """
         # Get BERT embeddings with autocast for mixed precision
         outputs = self.bert(
             input_ids=input_ids,
             attention_mask=attention_mask,
-            output_hidden_states=False,
+            output_hidden_states=self.enable_context_awareness,  # Need hidden states for context
             output_attentions=False
         )
         
-        # Use pooled output
+        # Use pooled output as base
         pooled_output = outputs.pooler_output
+        
+        # Apply context-aware enhancement if enabled
+        if self.enable_context_awareness and hasattr(self, 'context_module'):
+            hidden_states = outputs.last_hidden_state
+            context_output = self.context_module(hidden_states, attention_mask)
+            
+            # Use enhanced features as the main representation
+            enhanced_features = context_output['enhanced_features']
+            
+            # Combine with original pooled output for robustness
+            pooled_output = 0.7 * enhanced_features + 0.3 * pooled_output
+            
+            # Store context information for potential analysis
+            self.last_context_scores = context_output.get('context_scores', None)
+            self.last_esg_relevance = context_output.get('esg_relevance', None)
+        
         pooled_output = self.dropout(pooled_output)
         
         # Task-specific predictions with residual connections
@@ -188,14 +237,18 @@ class MemoryEfficientDataset(Dataset):
             'category_labels': torch.LongTensor([self.category_labels[idx]])
         }
 
-class LightweightTrainer:
+class LightweightTrainer(ContextAwareTrainingMixin):
     """
-    Memory-efficient trainer for ESG model
+    Context-aware memory-efficient trainer for ESG model
     """
     
     def __init__(self, model_name='ProsusAI/finbert', max_length=128, 
-                 learning_rate=2e-5, batch_size=8, num_epochs=3,
-                 gradient_accumulation_steps=2, early_stopping_patience=3):
+                 learning_rate=3e-5, batch_size=16, num_epochs=3,
+                 gradient_accumulation_steps=1, early_stopping_patience=2,
+                 enable_context_awareness=True, random_seed=42):
+        
+        # Initialize parent classes
+        super().__init__()
         
         self.model_name = model_name
         self.max_length = max_length
@@ -206,6 +259,14 @@ class LightweightTrainer:
         self.early_stopping_patience = early_stopping_patience
         self.best_val_f1 = 0.0
         self.patience_counter = 0
+        self.enable_context_awareness = enable_context_awareness
+        self.evaluation_metrics = {'train': [], 'val': []}
+        self.random_seed = random_seed
+        
+        # Set up reproducibility (order matters: logging first, then seeds, then system info)
+        self._setup_logging()
+        self._set_random_seeds()
+        self._log_system_info()
         
         # Device setup
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -264,6 +325,9 @@ class LightweightTrainer:
         if len(self.val_df) > 1500:
             self.val_df = self.val_df.sample(n=1500, random_state=42)
             print(f"Sampled validation data to {len(self.val_df)} samples")
+        
+        # Log data splits for reproducibility
+        self._log_data_splits(self.train_df, self.val_df, self.test_df)
         
         # Prepare labels
         self._prepare_labels()
@@ -366,8 +430,14 @@ class LightweightTrainer:
                 
             self.model = LightweightESGModel(
                 model_name=self.model_name,
-                num_indicators=self.num_indicators
+                num_indicators=self.num_indicators,
+                enable_context_awareness=self.enable_context_awareness
             ).to(self.device)
+            
+            # Initialize context-aware capabilities if enabled
+            if self.enable_context_awareness:
+                self.initialize_context_awareness(hidden_size=self.model.hidden_size)
+                print("Context-aware capabilities initialized")
             
             # Count trainable parameters
             trainable_params = sum(p.numel() for p in self.model.parameters() if p.requires_grad)
@@ -382,11 +452,11 @@ class LightweightTrainer:
                 memory_reserved = torch.cuda.memory_reserved(0) / 1024**3
                 print(f"GPU Memory - Allocated: {memory_allocated:.2f} GB, Reserved: {memory_reserved:.2f} GB")
             
-            # Initialize optimizer with improved settings
+            # Initialize optimizer with anti-overfitting settings
             self.optimizer = AdamW(
                 self.model.parameters(),
                 lr=self.learning_rate,
-                weight_decay=0.02,  # Increased weight decay
+                weight_decay=0.05,  # Higher weight decay for regularization
                 eps=1e-8,
                 betas=(0.9, 0.999)
             )
@@ -400,10 +470,10 @@ class LightweightTrainer:
         # Calculate training steps
         total_steps = len(self.train_dataset) // (self.batch_size * self.gradient_accumulation_steps) * self.num_epochs
         
-        # Initialize scheduler with longer warmup
+        # Initialize scheduler with optimal warmup for stability
         self.scheduler = get_linear_schedule_with_warmup(
             self.optimizer,
-            num_warmup_steps=int(0.15 * total_steps),  # Increased warmup
+            num_warmup_steps=int(0.1 * total_steps),  # Balanced warmup
             num_training_steps=total_steps
         )
         
@@ -594,8 +664,8 @@ class LightweightTrainer:
         for key in total_losses:
             total_losses[key] /= len(dataloader)
         
-        # Calculate metrics
-        metrics = self._calculate_metrics(
+        # Calculate comprehensive metrics
+        metrics = self._calculate_comprehensive_metrics(
             all_indicator_preds, all_indicator_labels,
             all_numerical_preds, all_numerical_labels,
             all_category_preds, all_category_labels
@@ -603,11 +673,11 @@ class LightweightTrainer:
         
         return total_losses, metrics
     
-    def _calculate_metrics(self, indicator_preds, indicator_labels,
-                          numerical_preds, numerical_labels,
-                          category_preds, category_labels):
+    def _calculate_comprehensive_metrics(self, indicator_preds, indicator_labels,
+                                        numerical_preds, numerical_labels,
+                                        category_preds, category_labels):
         """
-        Calculate evaluation metrics
+        Calculate comprehensive evaluation metrics including F1, precision, and recall
         """
         # Convert to numpy
         indicator_preds = np.array(indicator_preds)
@@ -621,14 +691,34 @@ class LightweightTrainer:
         indicator_preds_binary = (indicator_preds > 0.5).astype(int)
         numerical_preds_binary = (numerical_preds > 0.5).astype(int)
         
+        # Comprehensive metrics for each task
         metrics = {
+            # Indicator metrics (multilabel)
             'indicator_f1_micro': f1_score(indicator_labels, indicator_preds_binary, average='micro', zero_division=0),
             'indicator_f1_macro': f1_score(indicator_labels, indicator_preds_binary, average='macro', zero_division=0),
+            'indicator_precision': precision_score(indicator_labels, indicator_preds_binary, average='macro', zero_division=0),
+            'indicator_recall': recall_score(indicator_labels, indicator_preds_binary, average='macro', zero_division=0),
+            'indicator_accuracy': accuracy_score(indicator_labels.flatten(), indicator_preds_binary.flatten()),
+            
+            # Numerical metrics
             'numerical_accuracy': accuracy_score(numerical_labels, numerical_preds_binary),
             'numerical_f1': f1_score(numerical_labels, numerical_preds_binary, zero_division=0),
+            'numerical_precision': precision_score(numerical_labels, numerical_preds_binary, zero_division=0),
+            'numerical_recall': recall_score(numerical_labels, numerical_preds_binary, zero_division=0),
+            
+            # Category metrics (multiclass)
             'category_accuracy': accuracy_score(category_labels, category_preds),
-            'category_f1': f1_score(category_labels, category_preds, average='macro', zero_division=0)
+            'category_f1': f1_score(category_labels, category_preds, average='macro', zero_division=0),
+            'category_precision': precision_score(category_labels, category_preds, average='macro', zero_division=0),
+            'category_recall': recall_score(category_labels, category_preds, average='macro', zero_division=0)
         }
+        
+        # Calculate overall F1 score (weighted average of all tasks)
+        metrics['overall_f1'] = (
+            metrics['indicator_f1_macro'] + 
+            metrics['numerical_f1'] + 
+            metrics['category_f1']
+        ) / 3
         
         return metrics
     
@@ -637,6 +727,12 @@ class LightweightTrainer:
         Main training loop
         """
         print("\n=== STARTING TRAINING ===")
+        
+        # Log training configuration
+        self._log_training_config()
+        
+        # Create requirements lock file
+        self._create_requirements_lock()
         
         # Create balanced data loaders
         # Calculate class weights for category balancing
@@ -670,17 +766,19 @@ class LightweightTrainer:
             pin_memory=False
         )
         
-        best_val_f1 = 0
         training_history = []
-        patience_counter = 0
+        self.patience_counter = 0
         
         for epoch in range(self.num_epochs):
+            epoch_start_time = datetime.now()
             print(f"\n--- Epoch {epoch + 1}/{self.num_epochs} ---")
+            self.logger.info(f"Starting Epoch {epoch + 1}/{self.num_epochs}")
             
             try:
                 # Training
                 train_losses = self.train_epoch(train_loader)
                 print(f"Training Loss: {train_losses['total_loss']:.4f}")
+                self.logger.info(f"Epoch {epoch + 1} - Training Loss: {train_losses['total_loss']:.4f}")
                 
                 # Validation
                 val_losses, val_metrics = self.evaluate(val_loader)
@@ -689,29 +787,81 @@ class LightweightTrainer:
                 print(f"Validation Accuracy (Numerical): {val_metrics['numerical_accuracy']:.4f}")
                 print(f"Validation Accuracy (Category): {val_metrics['category_accuracy']:.4f}")
                 
-                # Early stopping and best model saving
-                current_val_f1 = val_metrics['indicator_f1_micro']
-                if current_val_f1 > best_val_f1:
-                    best_val_f1 = current_val_f1
-                    patience_counter = 0
-                    self.save_model('best_lightweight_model')
-                    print(f"New best model saved! F1: {best_val_f1:.4f}")
-                else:
-                    patience_counter += 1
-                    print(f"No improvement. Patience: {patience_counter}/{self.early_stopping_patience}")
+                # Log detailed metrics
+                self.logger.info(f"Epoch {epoch + 1} - Validation Loss: {val_losses['total_loss']:.4f}")
+                self.logger.info(f"Epoch {epoch + 1} - Overall F1: {val_metrics['overall_f1']:.4f}")
+                self.logger.info(f"Epoch {epoch + 1} - Indicator F1 (Macro): {val_metrics['indicator_f1_macro']:.4f}")
+                self.logger.info(f"Epoch {epoch + 1} - Indicator F1 (Micro): {val_metrics['indicator_f1_micro']:.4f}")
+                self.logger.info(f"Epoch {epoch + 1} - Indicator Precision: {val_metrics['indicator_precision']:.4f}")
+                self.logger.info(f"Epoch {epoch + 1} - Indicator Recall: {val_metrics['indicator_recall']:.4f}")
+                self.logger.info(f"Epoch {epoch + 1} - Numerical F1: {val_metrics['numerical_f1']:.4f}")
+                self.logger.info(f"Epoch {epoch + 1} - Category F1: {val_metrics['category_f1']:.4f}")
                 
-                # Record history
-                training_history.append({
+                # Enhanced early stopping with multiple metrics tracking
+                current_val_f1 = val_metrics['overall_f1']  # Use overall F1 for better stopping
+                
+                # Store metrics for analysis
+                self.evaluation_metrics['val'].append({
                     'epoch': epoch + 1,
-                    'train_loss': train_losses['total_loss'],
-                    'val_loss': val_losses['total_loss'],
-                    'val_f1': val_metrics['indicator_f1_micro'],
-                    'val_numerical_acc': val_metrics['numerical_accuracy'],
-                    'val_category_acc': val_metrics['category_accuracy']
+                    'overall_f1': current_val_f1,
+                    'indicator_f1': val_metrics['indicator_f1_macro'],
+                    'numerical_f1': val_metrics['numerical_f1'],
+                    'category_f1': val_metrics['category_f1'],
+                    'indicator_precision': val_metrics['indicator_precision'],
+                    'indicator_recall': val_metrics['indicator_recall']
                 })
                 
+                # Stronger early stopping with F1 improvement threshold
+                improvement_threshold = 0.001  # Minimum improvement required
+                if current_val_f1 > self.best_val_f1 + improvement_threshold:
+                    self.best_val_f1 = current_val_f1
+                    self.patience_counter = 0
+                    self.save_model('best_lightweight_model')
+                    print(f"New best model saved! Overall F1: {self.best_val_f1:.4f}")
+                    print(f"  Indicator F1: {val_metrics['indicator_f1_macro']:.4f}")
+                    print(f"  Numerical F1: {val_metrics['numerical_f1']:.4f}")
+                    print(f"  Category F1: {val_metrics['category_f1']:.4f}")
+                else:
+                    self.patience_counter += 1
+                    print(f"No significant improvement. Patience: {self.patience_counter}/{self.early_stopping_patience}")
+                    print(f"  Current F1: {current_val_f1:.4f}, Best F1: {self.best_val_f1:.4f}")
+                
+                # Calculate epoch duration
+                epoch_duration = (datetime.now() - epoch_start_time).total_seconds()
+                
+                # Record comprehensive training history
+                epoch_data = {
+                    'epoch': epoch + 1,
+                    'timestamp': datetime.now().isoformat(),
+                    'epoch_duration_seconds': epoch_duration,
+                    'train_loss': train_losses['total_loss'],
+                    'val_loss': val_losses['total_loss'],
+                    'val_overall_f1': val_metrics['overall_f1'],
+                    'val_indicator_f1_macro': val_metrics['indicator_f1_macro'],
+                    'val_indicator_f1_micro': val_metrics['indicator_f1_micro'],
+                    'val_indicator_precision': val_metrics['indicator_precision'],
+                    'val_indicator_recall': val_metrics['indicator_recall'],
+                    'val_indicator_accuracy': val_metrics['indicator_accuracy'],
+                    'val_numerical_f1': val_metrics['numerical_f1'],
+                    'val_numerical_precision': val_metrics['numerical_precision'],
+                    'val_numerical_recall': val_metrics['numerical_recall'],
+                    'val_numerical_accuracy': val_metrics['numerical_accuracy'],
+                    'val_category_f1': val_metrics['category_f1'],
+                    'val_category_precision': val_metrics['category_precision'],
+                    'val_category_recall': val_metrics['category_recall'],
+                    'val_category_accuracy': val_metrics['category_accuracy'],
+                    'learning_rate': self.optimizer.param_groups[0]['lr'],
+                    'best_f1_so_far': self.best_val_f1,
+                    'patience_counter': self.patience_counter
+                }
+                
+                training_history.append(epoch_data)
+                
+                # Log epoch completion
+                self.logger.info(f"Epoch {epoch + 1} completed in {epoch_duration:.2f} seconds")
+                
                 # Early stopping check
-                if patience_counter >= self.early_stopping_patience:
+                if self.patience_counter >= self.early_stopping_patience:
                     print(f"\nEarly stopping triggered after {epoch + 1} epochs!")
                     break
                 
@@ -728,9 +878,218 @@ class LightweightTrainer:
                 torch.cuda.empty_cache()
         
         print("\n=== TRAINING COMPLETED ===")
-        print(f"Best validation F1: {best_val_f1:.4f}")
+        print(f"Best validation F1: {self.best_val_f1:.4f}")
+        
+        # Log training completion
+        self.logger.info("=== TRAINING COMPLETED ===")
+        self.logger.info(f"Best validation F1: {self.best_val_f1:.4f}")
+        self.logger.info(f"Total epochs completed: {len(training_history)}")
+        
+        # Save comprehensive training history with reproducibility info
+        final_history = {
+            'training_metadata': {
+                'model_name': self.model_name,
+                'random_seed': self.random_seed,
+                'training_start_time': training_history[0]['timestamp'] if training_history else None,
+                'training_end_time': datetime.now().isoformat(),
+                'total_epochs': len(training_history),
+                'best_val_f1': self.best_val_f1,
+                'early_stopping_triggered': self.patience_counter >= self.early_stopping_patience,
+                'final_patience_counter': self.patience_counter,
+                'log_file': self.log_file
+            },
+            'training_config': {
+                'learning_rate': self.learning_rate,
+                'batch_size': self.batch_size,
+                'num_epochs': self.num_epochs,
+                'gradient_accumulation_steps': self.gradient_accumulation_steps,
+                'early_stopping_patience': self.early_stopping_patience,
+                'enable_context_awareness': self.enable_context_awareness,
+                'max_length': self.max_length
+            },
+            'epoch_history': training_history,
+            'evaluation_metrics': self.evaluation_metrics
+        }
+        
+        # Save training history with standardized name
+        history_file = "training_history.json"
+        with open(history_file, 'w') as f:
+            json.dump(final_history, f, indent=2)
+        
+        self.logger.info(f"Complete training history saved to: {history_file}")
+        
+        # Save final training metrics
+        self.training_history = training_history
         
         return training_history
+    
+    def _set_random_seeds(self):
+        """Set random seeds for reproducibility"""
+        random.seed(self.random_seed)
+        np.random.seed(self.random_seed)
+        torch.manual_seed(self.random_seed)
+        torch.cuda.manual_seed(self.random_seed)
+        torch.cuda.manual_seed_all(self.random_seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+        os.environ['PYTHONHASHSEED'] = str(self.random_seed)
+        
+        self.logger.info(f"Random seeds set to: {self.random_seed}")
+    
+    def _setup_logging(self):
+        """Set up comprehensive logging"""
+        # Create logs directory
+        log_dir = "logs"
+        os.makedirs(log_dir, exist_ok=True)
+        
+        # Create standardized log file
+        log_file = os.path.join(log_dir, "training_log.log")
+        
+        # Configure logging
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(levelname)s - %(message)s',
+            handlers=[
+                logging.FileHandler(log_file),
+                logging.StreamHandler()
+            ]
+        )
+        
+        self.logger = logging.getLogger(__name__)
+        self.log_file = log_file
+        
+        self.logger.info("=== ESG Model Training Session Started ===")
+        self.logger.info(f"Log file: {log_file}")
+    
+    def _log_system_info(self):
+        """Log comprehensive system information"""
+        self.logger.info("=== System Information ===")
+        self.logger.info(f"Platform: {platform.platform()}")
+        self.logger.info(f"Python version: {platform.python_version()}")
+        self.logger.info(f"PyTorch version: {torch.__version__}")
+        
+        if torch.cuda.is_available():
+            self.logger.info(f"CUDA available: True")
+            self.logger.info(f"CUDA version: {torch.version.cuda}")
+            self.logger.info(f"GPU: {torch.cuda.get_device_name(0)}")
+            self.logger.info(f"GPU memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.1f} GB")
+        else:
+            self.logger.info("CUDA available: False")
+        
+        # Log package versions
+        try:
+            import transformers
+            self.logger.info(f"Transformers version: {transformers.__version__}")
+        except:
+            pass
+        
+        try:
+            import sklearn
+            self.logger.info(f"Scikit-learn version: {sklearn.__version__}")
+        except:
+            pass
+    
+    def _create_requirements_lock(self):
+        """Create requirements lock file with exact versions"""
+        try:
+            # Get installed packages
+            result = subprocess.run(['pip', 'freeze'], capture_output=True, text=True)
+            if result.returncode == 0:
+                requirements_content = result.stdout
+                
+                # Save to lock file
+                lock_file = "requirements_lock.txt"
+                with open(lock_file, 'w') as f:
+                    f.write(requirements_content)
+                
+                self.logger.info(f"Requirements lock file created: {lock_file}")
+                return lock_file
+            else:
+                self.logger.warning("Failed to create requirements lock file")
+                return None
+        except Exception as e:
+            self.logger.warning(f"Error creating requirements lock file: {e}")
+            return None
+    
+    def _compute_data_hash(self, data):
+        """Compute hash of data for reproducibility tracking"""
+        if isinstance(data, pd.DataFrame):
+            # Create hash from dataframe content
+            content = data.to_string().encode('utf-8')
+        elif isinstance(data, (list, tuple)):
+            # Create hash from list/tuple content
+            content = str(data).encode('utf-8')
+        else:
+            content = str(data).encode('utf-8')
+        
+        return hashlib.md5(content).hexdigest()
+    
+    def _log_data_splits(self, train_data, val_data, test_data=None):
+        """Log data split information and hashes"""
+        self.logger.info("=== Data Split Information ===")
+        
+        train_hash = self._compute_data_hash(train_data)
+        val_hash = self._compute_data_hash(val_data)
+        
+        self.logger.info(f"Training set size: {len(train_data)}")
+        self.logger.info(f"Training set hash: {train_hash}")
+        self.logger.info(f"Validation set size: {len(val_data)}")
+        self.logger.info(f"Validation set hash: {val_hash}")
+        
+        if test_data is not None:
+            test_hash = self._compute_data_hash(test_data)
+            self.logger.info(f"Test set size: {len(test_data)}")
+            self.logger.info(f"Test set hash: {test_hash}")
+        
+        # Save split hashes to file
+        split_info = {
+            'timestamp': datetime.now().isoformat(),
+            'random_seed': self.random_seed,
+            'train_size': len(train_data),
+            'train_hash': train_hash,
+            'val_size': len(val_data),
+            'val_hash': val_hash
+        }
+        
+        if test_data is not None:
+            split_info.update({
+                'test_size': len(test_data),
+                'test_hash': test_hash
+            })
+        
+        split_file = "data_split_hashes.json"
+        with open(split_file, 'w') as f:
+            json.dump(split_info, f, indent=2)
+        
+        self.logger.info(f"Data split hashes saved to: {split_file}")
+        return split_file
+    
+    def _log_training_config(self):
+        """Log complete training configuration"""
+        config = {
+            'model_name': self.model_name,
+            'max_length': self.max_length,
+            'learning_rate': self.learning_rate,
+            'batch_size': self.batch_size,
+            'num_epochs': self.num_epochs,
+            'gradient_accumulation_steps': self.gradient_accumulation_steps,
+            'early_stopping_patience': self.early_stopping_patience,
+            'enable_context_awareness': self.enable_context_awareness,
+            'random_seed': self.random_seed,
+            'timestamp': datetime.now().isoformat()
+        }
+        
+        self.logger.info("=== Training Configuration ===")
+        for key, value in config.items():
+            self.logger.info(f"{key}: {value}")
+        
+        # Save config to file
+        config_file = "training_config.json"
+        with open(config_file, 'w') as f:
+            json.dump(config, f, indent=2)
+        
+        self.logger.info(f"Training configuration saved to: {config_file}")
+        return config_file
     
     def save_model(self, model_name):
         """

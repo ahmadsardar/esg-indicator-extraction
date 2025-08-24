@@ -1,0 +1,10 @@
+{
+  "timestamp": "2025-08-24T16:58:47.497746",
+  "random_seed": 42,
+  "train_size": 8000,
+  "train_hash": "88aad7acc079e678272bc65ad2c5ae61",
+  "val_size": 1500,
+  "val_hash": "70d4814ba9cc7d19cfe756e2cc3619b6",
+  "test_size": 1946,
+  "test_hash": "87607863e5098078c11be2c5cf5dd6e0"
+}

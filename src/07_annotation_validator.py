@@ -233,7 +233,6 @@ class ESGAnnotationValidator:
     
     def save_validation_results(self, report: Dict, best_samples: pd.DataFrame):
         """Save validation results and best samples with standardized filenames"""
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         
         # Save validation report with standardized name
         report_path = self.output_dir / 'validation_report.json'
@@ -248,7 +247,7 @@ class ESGAnnotationValidator:
         
         # Save summary with standardized name
         summary = {
-            'validation_timestamp': timestamp,
+            'validation_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'total_samples_analyzed': report['dataset_overview']['total_samples'],
             'high_quality_samples': report['quality_analysis']['overview']['high_quality_samples'],
             'samples_with_numerical_data': report['quality_analysis']['overview']['samples_with_numerical_data'],

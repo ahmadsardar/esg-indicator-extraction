@@ -1,442 +1,254 @@
-"""
-Context-Aware ESG Indicator Extraction Model
+"""Context-Aware ESG Enhancement Module
 
-This model is designed to:
-1. Extract known ESG indicators from the expanded 46-indicator set
-2. Recognize NEW/UNSEEN ESG indicators by understanding ESG context patterns
-3. Use contextual embeddings and semantic similarity to identify ESG-related content
-4. Classify new indicators into Environmental, Social, or Governance categories
+This module provides context-aware capabilities for the lightweight ESG model:
+1. ESG semantic understanding through domain-specific embeddings
+2. Context-aware feature enhancement for better classification
+3. Bias-free ESG domain knowledge integration
+4. Memory-efficient implementation for training pipeline integration
 
-Approach:
-- Fine-tune FinBERT on known indicators
-- Use contextual pattern recognition for unknown indicators
-- Implement semantic similarity matching
-- Apply ESG domain knowledge for classification
-
-Author: Thesis Project
-Date: 2024
+Author: ESG Analysis System
+Date: 2025-01-24
 """
 
-import json
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
 import numpy as np
-from transformers import (
-    AutoTokenizer, AutoModel, AutoModelForSequenceClassification,
-    TrainingArguments, Trainer, pipeline
-)
+from typing import Dict, List, Optional, Tuple
+import json
+from transformers import AutoTokenizer, AutoModel
 from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.cluster import KMeans
-import pandas as pd
-from typing import List, Dict, Tuple, Any
-import re
-from datetime import datetime
+import warnings
+warnings.filterwarnings('ignore')
 
-class ContextAwareESGExtractor:
-    def __init__(self, model_name: str = "ProsusAI/finbert"):
-        """
-        Initialize the context-aware ESG extraction model
+class ESGContextAwareModule(nn.Module):
+    """Context-aware module for ESG semantic understanding"""
+    
+    def __init__(self, hidden_size: int = 768, context_dim: int = 128, dropout_rate: float = 0.1):
+        super(ESGContextAwareModule, self).__init__()
         
-        Args:
-            model_name: Base model to use (default: FinBERT)
-        """
+        self.hidden_size = hidden_size
+        self.context_dim = context_dim
+        
+        # ESG domain knowledge embeddings (learned, not hardcoded)
+        self.esg_category_embeddings = nn.Embedding(3, context_dim)  # E, S, G
+        
+        # Context attention mechanism
+        self.context_attention = nn.MultiheadAttention(
+            embed_dim=hidden_size,
+            num_heads=8,
+            dropout=dropout_rate,
+            batch_first=True
+        )
+        
+        # Context fusion layers
+        self.context_proj = nn.Linear(hidden_size, context_dim)
+        self.context_norm = nn.LayerNorm(context_dim)
+        self.context_dropout = nn.Dropout(dropout_rate)
+        
+        # Enhanced feature fusion
+        self.fusion_gate = nn.Linear(hidden_size + context_dim, hidden_size)
+        self.fusion_norm = nn.LayerNorm(hidden_size)
+        
+        # Initialize embeddings with ESG-aware values
+        self._initialize_esg_embeddings()
+    
+    def _initialize_esg_embeddings(self):
+        """Initialize ESG category embeddings with domain knowledge"""
+        # Initialize with small random values to avoid bias
+        nn.init.normal_(self.esg_category_embeddings.weight, mean=0.0, std=0.02)
+    
+    def compute_esg_context_scores(self, hidden_states: torch.Tensor, 
+                                 attention_mask: torch.Tensor) -> torch.Tensor:
+        """Compute ESG context relevance scores without bias"""
+        batch_size, seq_len, hidden_dim = hidden_states.shape
+        
+        # Apply attention mask
+        masked_hidden = hidden_states * attention_mask.unsqueeze(-1)
+        
+        # Compute attention weights for ESG relevance
+        context_query = self.context_proj(masked_hidden.mean(dim=1))  # [batch, context_dim]
+        context_query = self.context_norm(context_query)
+        
+        # Get ESG category embeddings
+        esg_embeddings = self.esg_category_embeddings.weight  # [3, context_dim]
+        
+        # Compute similarity scores (no hardcoded bias)
+        context_scores = torch.matmul(context_query, esg_embeddings.T)  # [batch, 3]
+        context_scores = F.softmax(context_scores, dim=-1)
+        
+        return context_scores
+    
+    def enhance_features_with_context(self, hidden_states: torch.Tensor,
+                                    attention_mask: torch.Tensor) -> torch.Tensor:
+        """Enhance features with ESG context awareness"""
+        batch_size, seq_len, hidden_dim = hidden_states.shape
+        
+        # Self-attention for context modeling
+        attended_features, _ = self.context_attention(
+            hidden_states, hidden_states, hidden_states,
+            key_padding_mask=~attention_mask.bool()
+        )
+        
+        # Pool attended features
+        pooled_attended = (attended_features * attention_mask.unsqueeze(-1)).sum(dim=1) / attention_mask.sum(dim=1, keepdim=True)
+        
+        # Compute context scores
+        context_scores = self.compute_esg_context_scores(hidden_states, attention_mask)
+        
+        # Project context scores to feature space
+        context_features = torch.matmul(context_scores, self.esg_category_embeddings.weight)
+        context_features = self.context_dropout(context_features)
+        
+        # Fusion gate for combining original and context features
+        combined_features = torch.cat([pooled_attended, context_features], dim=-1)
+        gate_weights = torch.sigmoid(self.fusion_gate(combined_features))
+        
+        # Enhanced features with gated fusion
+        enhanced_features = gate_weights * pooled_attended + (1 - gate_weights) * pooled_attended
+        enhanced_features = self.fusion_norm(enhanced_features)
+        
+        return enhanced_features, context_scores
+    
+    def forward(self, hidden_states: torch.Tensor, attention_mask: torch.Tensor) -> Dict[str, torch.Tensor]:
+        """Forward pass for context-aware enhancement"""
+        enhanced_features, context_scores = self.enhance_features_with_context(hidden_states, attention_mask)
+        
+        return {
+            'enhanced_features': enhanced_features,
+            'context_scores': context_scores,
+            'esg_relevance': context_scores.max(dim=-1)[0]  # Overall ESG relevance
+        }
+
+class ESGSemanticEnhancer:
+    """Semantic enhancement utilities for ESG text processing"""
+    
+    def __init__(self, model_name: str = "ProsusAI/finbert"):
         self.model_name = model_name
         self.tokenizer = None
         self.model = None
-        self.known_indicators = []
-        self.esg_context_patterns = []
-        self.category_embeddings = {}
-        
-        # ESG context keywords for pattern recognition
-        self.esg_keywords = {
-            "Environmental": [
-                "carbon", "emissions", "greenhouse gas", "climate", "energy", "renewable",
-                "waste", "recycling", "water", "biodiversity", "pollution", "sustainability",
-                "environmental impact", "carbon footprint", "scope 1", "scope 2", "scope 3",
-                "energy efficiency", "renewable energy", "waste reduction", "circular economy",
-                "deforestation", "land use", "air quality", "water consumption", "toxic"
-            ],
-            "Social": [
-                "employee", "diversity", "inclusion", "safety", "health", "training",
-                "human rights", "community", "stakeholder", "customer", "supplier",
-                "workplace", "gender", "equality", "labor", "social impact", "wellbeing",
-                "discrimination", "harassment", "child labor", "forced labor", "privacy",
-                "data protection", "product safety", "consumer", "local community"
-            ],
-            "Governance": [
-                "board", "governance", "ethics", "compliance", "transparency", "accountability",
-                "risk management", "audit", "corruption", "bribery", "executive compensation",
-                "shareholder", "disclosure", "reporting", "oversight", "independence",
-                "anti-corruption", "whistleblower", "conflict of interest", "regulatory",
-                "internal controls", "board diversity", "executive", "management"
-            ]
+        self._esg_domain_terms = self._load_esg_domain_terms()
+    
+    def _load_esg_domain_terms(self) -> Dict[str, List[str]]:
+        """Load ESG domain terms for semantic enhancement (bias-free)"""
+        # Minimal, unbiased ESG domain terms
+        return {
+            "environmental": ["environmental", "climate", "energy", "emissions", "sustainability"],
+            "social": ["social", "employee", "community", "diversity", "safety"],
+            "governance": ["governance", "board", "ethics", "compliance", "transparency"]
         }
-        
-    def load_known_indicators(self, indicators_file: str = "data/expanded_esg_indicators.json"):
-        """
-        Load the expanded set of known ESG indicators
-        """
-        with open(indicators_file, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            self.known_indicators = data['indicators']
-        
-        print(f"Loaded {len(self.known_indicators)} known ESG indicators")
-        
-        # Create indicator lookup by name and keywords
-        self.indicator_lookup = {}
-        for ind in self.known_indicators:
-            # Add main name
-            self.indicator_lookup[ind['name'].lower()] = ind
-            
-            # Add variations and keywords from description
-            desc_words = re.findall(r'\b\w+\b', ind['description'].lower())
-            for word in desc_words:
-                if len(word) > 3:  # Only meaningful words
-                    if word not in self.indicator_lookup:
-                        self.indicator_lookup[word] = []
-                    if isinstance(self.indicator_lookup[word], list):
-                        self.indicator_lookup[word].append(ind)
-                    else:
-                        self.indicator_lookup[word] = [self.indicator_lookup[word], ind]
-        
+    
     def initialize_model(self):
-        """
-        Initialize the FinBERT model and tokenizer
-        """
-        print(f"Initializing {self.model_name} model...")
+        """Initialize the base model for semantic analysis"""
+        if self.tokenizer is None:
+            self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+            self.model = AutoModel.from_pretrained(self.model_name)
+            self.model.eval()
+    
+    def compute_semantic_relevance(self, text: str) -> Dict[str, float]:
+        """Compute semantic relevance to ESG domains without bias"""
+        if not self.model:
+            self.initialize_model()
         
-        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        self.model = AutoModel.from_pretrained(self.model_name)
+        text_lower = text.lower()
+        relevance_scores = {}
         
-        # Set model to evaluation mode
-        self.model.eval()
+        for domain, terms in self._esg_domain_terms.items():
+            # Simple term frequency approach (unbiased)
+            score = sum(1 for term in terms if term in text_lower)
+            # Normalize by text length to avoid length bias
+            relevance_scores[domain] = score / max(len(text.split()), 1)
         
-        print("Model initialized successfully")
+        return relevance_scores
+    
+    def enhance_text_representation(self, text: str, max_length: int = 512) -> Dict[str, torch.Tensor]:
+        """Enhance text representation with ESG semantic information"""
+        if not self.model:
+            self.initialize_model()
         
-    def get_text_embedding(self, text: str) -> np.ndarray:
-        """
-        Get contextual embedding for a text using FinBERT
-        """
-        inputs = self.tokenizer(text, return_tensors="pt", truncation=True, 
-                               padding=True, max_length=512)
+        # Tokenize and encode
+        inputs = self.tokenizer(
+            text, return_tensors="pt", truncation=True,
+            padding=True, max_length=max_length
+        )
         
         with torch.no_grad():
             outputs = self.model(**inputs)
-            # Use [CLS] token embedding as sentence representation
-            embedding = outputs.last_hidden_state[:, 0, :].numpy()
-            
-        return embedding.flatten()
+            hidden_states = outputs.last_hidden_state
+            pooled_output = outputs.pooler_output
         
-    def build_category_embeddings(self):
-        """
-        Build representative embeddings for each ESG category
-        """
-        print("Building category embeddings...")
+        # Compute semantic relevance
+        semantic_scores = self.compute_semantic_relevance(text)
         
-        for category, keywords in self.esg_keywords.items():
-            # Create representative text for each category
-            category_text = f"{category} indicators include: " + ", ".join(keywords[:10])
-            embedding = self.get_text_embedding(category_text)
-            self.category_embeddings[category] = embedding
-            
-        print("Category embeddings built")
-        
-    def extract_known_indicators(self, text: str) -> List[Dict]:
-        """
-        Extract known ESG indicators from text using keyword matching and context
-        """
-        found_indicators = []
-        text_lower = text.lower()
-        
-        # Direct name matching
-        for indicator in self.known_indicators:
-            indicator_name = indicator['name'].lower()
-            
-            # Check for direct mentions or variations
-            patterns = [
-                indicator_name,
-                indicator_name.replace('indicator', ''),
-                indicator_name.replace('emissions', 'emission'),
-                # Add more pattern variations as needed
-            ]
-            
-            for pattern in patterns:
-                if pattern in text_lower and len(pattern) > 3:
-                    # Extract surrounding context
-                    start_idx = text_lower.find(pattern)
-                    context_start = max(0, start_idx - 100)
-                    context_end = min(len(text), start_idx + len(pattern) + 100)
-                    context = text[context_start:context_end]
-                    
-                    found_indicators.append({
-                        'indicator': indicator,
-                        'matched_text': text[start_idx:start_idx + len(pattern)],
-                        'context': context,
-                        'confidence': 0.9,  # High confidence for direct matches
-                        'extraction_type': 'known_direct'
-                    })
-                    break
-                    
-        return found_indicators
-        
-    def detect_esg_context(self, text: str) -> Dict[str, float]:
-        """
-        Detect ESG context in text and return category scores
-        """
-        text_lower = text.lower()
-        category_scores = {"Environmental": 0, "Social": 0, "Governance": 0}
-        
-        for category, keywords in self.esg_keywords.items():
-            score = 0
-            for keyword in keywords:
-                if keyword in text_lower:
-                    # Weight by keyword importance (longer keywords = higher weight)
-                    weight = len(keyword.split()) * 0.1 + 0.1
-                    score += weight
-                    
-            # Normalize by text length
-            category_scores[category] = score / (len(text.split()) + 1)
-            
-        return category_scores
-        
-    def extract_potential_new_indicators(self, text: str, threshold: float = 0.05) -> List[Dict]:
-        """
-        Extract potential new ESG indicators using context analysis
-        """
-        potential_indicators = []
-        
-        # Split text into sentences
-        sentences = re.split(r'[.!?]+', text)
-        
-        for sentence in sentences:
-            sentence = sentence.strip()
-            if len(sentence) < 20:  # Skip very short sentences
-                continue
-                
-            # Check if sentence has ESG context
-            category_scores = self.detect_esg_context(sentence)
-            max_score = max(category_scores.values())
-            
-            if max_score > threshold:
-                # Determine most likely category
-                predicted_category = max(category_scores, key=category_scores.get)
-                
-                # Extract potential indicator phrases using NLP patterns
-                indicator_phrases = self.extract_indicator_phrases(sentence)
-                
-                for phrase in indicator_phrases:
-                    # Check if it's not already a known indicator
-                    if not self.is_known_indicator(phrase):
-                        potential_indicators.append({
-                            'phrase': phrase,
-                            'sentence': sentence,
-                            'predicted_category': predicted_category,
-                            'category_scores': category_scores,
-                            'confidence': max_score,
-                            'extraction_type': 'new_contextual'
-                        })
-                        
-        return potential_indicators
-        
-    def extract_indicator_phrases(self, sentence: str) -> List[str]:
-        """
-        Extract potential indicator phrases from a sentence using NLP patterns
-        """
-        phrases = []
-        
-        # Pattern 1: Noun phrases with measurement context
-        measurement_patterns = [
-            r'\b([a-zA-Z\s]+)\s+(?:increased|decreased|improved|reduced|measured|reported)\b',
-            r'\b(?:our|the|total|annual)\s+([a-zA-Z\s]+)\s+(?:is|was|reached|achieved)\b',
-            r'\b([a-zA-Z\s]+)\s+(?:rate|ratio|percentage|level|amount|volume)\b',
-            r'\b([a-zA-Z\s]+)\s+(?:performance|efficiency|intensity|footprint)\b'
-        ]
-        
-        for pattern in measurement_patterns:
-            matches = re.finditer(pattern, sentence, re.IGNORECASE)
-            for match in matches:
-                phrase = match.group(1).strip()
-                if len(phrase.split()) <= 4 and len(phrase) > 3:  # Reasonable phrase length
-                    phrases.append(phrase)
-                    
-        # Pattern 2: ESG-specific noun phrases
-        esg_patterns = [
-            r'\b(\w+\s+emissions?)\b',
-            r'\b(\w+\s+consumption)\b',
-            r'\b(\w+\s+diversity)\b',
-            r'\b(\w+\s+safety)\b',
-            r'\b(\w+\s+governance)\b',
-            r'\b(\w+\s+compliance)\b'
-        ]
-        
-        for pattern in esg_patterns:
-            matches = re.finditer(pattern, sentence, re.IGNORECASE)
-            for match in matches:
-                phrase = match.group(1).strip()
-                phrases.append(phrase)
-                
-        return list(set(phrases))  # Remove duplicates
-        
-    def is_known_indicator(self, phrase: str) -> bool:
-        """
-        Check if a phrase matches a known indicator
-        """
-        phrase_lower = phrase.lower()
-        
-        # Check direct matches
-        for indicator in self.known_indicators:
-            if phrase_lower in indicator['name'].lower() or indicator['name'].lower() in phrase_lower:
-                return True
-                
-        return False
-        
-    def semantic_similarity_classification(self, text: str) -> Dict[str, float]:
-        """
-        Use semantic similarity to classify text into ESG categories
-        """
-        if not self.category_embeddings:
-            self.build_category_embeddings()
-            
-        text_embedding = self.get_text_embedding(text)
-        similarities = {}
-        
-        for category, cat_embedding in self.category_embeddings.items():
-            similarity = cosine_similarity(
-                text_embedding.reshape(1, -1),
-                cat_embedding.reshape(1, -1)
-            )[0][0]
-            similarities[category] = float(similarity)
-            
-        return similarities
-        
-    def extract_all_indicators(self, text: str) -> Dict[str, List]:
-        """
-        Main extraction method that finds both known and potential new indicators
-        """
-        results = {
-            'known_indicators': [],
-            'potential_new_indicators': [],
-            'text_esg_scores': {},
-            'semantic_similarities': {}
+        return {
+            'hidden_states': hidden_states,
+            'pooled_output': pooled_output,
+            'attention_mask': inputs['attention_mask'],
+            'semantic_scores': semantic_scores
         }
-        
-        # Extract known indicators
-        results['known_indicators'] = self.extract_known_indicators(text)
-        
-        # Extract potential new indicators
-        results['potential_new_indicators'] = self.extract_potential_new_indicators(text)
-        
-        # Get overall ESG context scores
-        results['text_esg_scores'] = self.detect_esg_context(text)
-        
-        # Get semantic similarities
-        results['semantic_similarities'] = self.semantic_similarity_classification(text)
-        
-        return results
-        
-    def save_extraction_results(self, results: Dict, filename: str = None):
-        """
-        Save extraction results to JSON file
-        """
-        if filename is None:
-            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            filename = f"results/esg_extraction_{timestamp}.json"
-            
-        # Convert numpy arrays to lists for JSON serialization
-        serializable_results = self.make_json_serializable(results)
-        
-        with open(filename, 'w', encoding='utf-8') as f:
-            json.dump(serializable_results, f, indent=2, ensure_ascii=False)
-            
-        print(f"Extraction results saved to {filename}")
-        
-    def make_json_serializable(self, obj):
-        """
-        Convert numpy arrays and other non-serializable objects to JSON-compatible format
-        """
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        elif isinstance(obj, dict):
-            return {key: self.make_json_serializable(value) for key, value in obj.items()}
-        elif isinstance(obj, list):
-            return [self.make_json_serializable(item) for item in obj]
-        elif isinstance(obj, (np.integer, np.floating)):
-            return float(obj)
-        else:
-            return obj
-            
-    def generate_summary_report(self, results: Dict) -> str:
-        """
-        Generate a human-readable summary of extraction results
-        """
-        report = "\n=== ESG Indicator Extraction Summary ===\n\n"
-        
-        # Known indicators summary
-        known_count = len(results['known_indicators'])
-        report += f"Known ESG Indicators Found: {known_count}\n"
-        
-        if known_count > 0:
-            report += "\nKnown Indicators:\n"
-            for item in results['known_indicators']:
-                indicator = item['indicator']
-                report += f"  - {indicator['name']} ({indicator['category']})\n"
-                report += f"    Confidence: {item['confidence']:.2f}\n"
-                
-        # Potential new indicators summary
-        new_count = len(results['potential_new_indicators'])
-        report += f"\nPotential New ESG Indicators: {new_count}\n"
-        
-        if new_count > 0:
-            report += "\nPotential New Indicators:\n"
-            for item in results['potential_new_indicators']:
-                report += f"  - '{item['phrase']}' (Predicted: {item['predicted_category']})\n"
-                report += f"    Confidence: {item['confidence']:.3f}\n"
-                
-        # ESG context analysis
-        report += "\nESG Context Analysis:\n"
-        for category, score in results['text_esg_scores'].items():
-            report += f"  {category}: {score:.3f}\n"
-            
-        # Semantic similarity
-        report += "\nSemantic Similarity to ESG Categories:\n"
-        for category, similarity in results['semantic_similarities'].items():
-            report += f"  {category}: {similarity:.3f}\n"
-            
-        return report
 
-def main():
-    """Main execution function for testing"""
+def create_context_aware_enhancement(hidden_size: int = 768, 
+                                   context_dim: int = 128,
+                                   dropout_rate: float = 0.1) -> ESGContextAwareModule:
+    """Factory function to create context-aware enhancement module"""
+    return ESGContextAwareModule(
+        hidden_size=hidden_size,
+        context_dim=context_dim,
+        dropout_rate=dropout_rate
+    )
+
+def load_esg_indicators(indicators_file: str = "data/indicators/final_esg_indicators.csv") -> List[Dict]:
+    """Load ESG indicators for context-aware training"""
+    try:
+        import pandas as pd
+        df = pd.read_csv(indicators_file)
+        indicators = []
+        for _, row in df.iterrows():
+            indicators.append({
+                'id': row.get('indicator_id', ''),
+                'name': row.get('indicator_name', ''),
+                'category': row.get('category', ''),
+                'description': row.get('description', '')
+            })
+        return indicators
+    except Exception as e:
+        print(f"Warning: Could not load ESG indicators: {e}")
+        return []
+
+class ContextAwareTrainingMixin:
+    """Mixin class for adding context-aware capabilities to training"""
     
-    # Initialize the extractor
-    extractor = ContextAwareESGExtractor()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.context_module = None
+        self.semantic_enhancer = None
     
-    # Load known indicators
-    extractor.load_known_indicators()
+    def initialize_context_awareness(self, hidden_size: int = 768):
+        """Initialize context-aware components"""
+        self.context_module = create_context_aware_enhancement(hidden_size=hidden_size)
+        self.semantic_enhancer = ESGSemanticEnhancer()
+        
+        if hasattr(self, 'device'):
+            self.context_module = self.context_module.to(self.device)
     
-    # Initialize model
-    extractor.initialize_model()
-    
-    # Test text with both known and potential new indicators
-    test_text = """
-    Our company achieved a 25% reduction in carbon emissions this year, improving our 
-    energy efficiency significantly. We also implemented new biodiversity protection 
-    measures and enhanced our employee wellbeing programs. The board diversity ratio 
-    increased to 40% women representation. Additionally, we introduced innovative 
-    circular packaging solutions and improved our supply chain transparency metrics.
-    Our new digital inclusion initiatives reached 10,000 community members.
-    """
-    
-    print("Testing Context-Aware ESG Extraction...")
-    print(f"Test text length: {len(test_text)} characters\n")
-    
-    # Extract indicators
-    results = extractor.extract_all_indicators(test_text)
-    
-    # Generate and print summary
-    summary = extractor.generate_summary_report(results)
-    print(summary)
-    
-    # Save results
-    extractor.save_extraction_results(results, "results/test_extraction_results.json")
-    
-if __name__ == "__main__":
-    main()
+    def enhance_batch_with_context(self, batch: Dict[str, torch.Tensor], 
+                                 hidden_states: torch.Tensor) -> Dict[str, torch.Tensor]:
+        """Enhance batch with context-aware features"""
+        if self.context_module is None:
+            return {'enhanced_features': hidden_states.mean(dim=1)}
+        
+        attention_mask = batch.get('attention_mask')
+        if attention_mask is None:
+            attention_mask = torch.ones(hidden_states.shape[:2], device=hidden_states.device)
+        
+        context_output = self.context_module(hidden_states, attention_mask)
+        return context_output
+
+# Export main components
+__all__ = [
+    'ESGContextAwareModule',
+    'ESGSemanticEnhancer', 
+    'ContextAwareTrainingMixin',
+    'create_context_aware_enhancement',
+    'load_esg_indicators'
+]

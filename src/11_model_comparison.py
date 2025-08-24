@@ -11,6 +11,7 @@ import json
 import pandas as pd
 import numpy as np
 import torch
+import torch.nn as nn
 import matplotlib.pyplot as plt
 import seaborn as sns
 from datetime import datetime
@@ -21,6 +22,28 @@ from sklearn.metrics import (
 )
 from transformers import AutoTokenizer, AutoModel, AutoConfig
 import warnings
+import sys
+import importlib.util
+
+# Import context-aware module
+context_module_path = os.path.join(os.path.dirname(__file__), "04_context_aware_esg_model.py")
+if os.path.exists(context_module_path):
+    spec = importlib.util.spec_from_file_location("context_aware_esg_model", context_module_path)
+    context_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(context_module)
+    
+    # Import context-aware classes
+    ESGContextAwareModule = context_module.ESGContextAwareModule
+    ESGSemanticEnhancer = context_module.ESGSemanticEnhancer
+    ContextAwareTrainingMixin = context_module.ContextAwareTrainingMixin
+    create_context_aware_enhancement = context_module.create_context_aware_enhancement
+else:
+    # Fallback if context module not found
+    ESGContextAwareModule = None
+    ESGSemanticEnhancer = None
+    ContextAwareTrainingMixin = None
+    create_context_aware_enhancement = None
+
 warnings.filterwarnings('ignore')
 
 # Set style for plots
@@ -57,13 +80,15 @@ class BaseFinBERTModel(torch.nn.Module):
             'category_logits': category_logits
         }
 
-class LightweightESGModel(torch.nn.Module):
-    """Enhanced ESG model (fine-tuned version)"""
+class LightweightESGModel(nn.Module):
+    """Enhanced ESG model (fine-tuned version) with context-aware capabilities"""
     
-    def __init__(self, model_name='ProsusAI/finbert'):
+    def __init__(self, model_name='ProsusAI/finbert', num_indicators=50, dropout_rate=0.4, 
+                 enable_context_awareness=True):
         super().__init__()
         self.config = AutoConfig.from_pretrained(model_name)
         self.bert = AutoModel.from_pretrained(model_name)
+        self.enable_context_awareness = enable_context_awareness
         
         # Freeze early layers for efficiency
         for param in self.bert.embeddings.parameters():
@@ -74,35 +99,65 @@ class LightweightESGModel(torch.nn.Module):
         
         # Match the exact architecture from training script
         self.hidden_size = self.config.hidden_size
-        self.dropout = torch.nn.Dropout(0.3)
+        self.dropout = nn.Dropout(dropout_rate)
+        
+        # Initialize context-aware module if enabled and available
+        if self.enable_context_awareness and create_context_aware_enhancement is not None:
+            self.context_module = create_context_aware_enhancement(
+                hidden_size=self.hidden_size,
+                context_dim=128,
+                dropout_rate=dropout_rate
+            )
+        else:
+            self.context_module = None
         
         # ESG Indicator Classification (matching training architecture)
-        self.indicator_proj = torch.nn.Linear(self.hidden_size, 256)
-        self.indicator_bn1 = torch.nn.BatchNorm1d(256)
-        self.indicator_hidden = torch.nn.Linear(256, 128)
-        self.indicator_bn2 = torch.nn.BatchNorm1d(128)
-        self.indicator_output = torch.nn.Linear(128, 47)  # 47 indicators
-        self.indicator_residual = torch.nn.Linear(self.hidden_size, 128)
+        self.indicator_proj = nn.Linear(self.hidden_size, 256)
+        self.indicator_bn1 = nn.BatchNorm1d(256)
+        self.indicator_hidden = nn.Linear(256, 128)
+        self.indicator_bn2 = nn.BatchNorm1d(128)
+        self.indicator_output = nn.Linear(128, num_indicators)
+        self.indicator_residual = nn.Linear(self.hidden_size, 128)
         
         # Numerical Detection (matching training architecture)
-        self.numerical_proj = torch.nn.Linear(self.hidden_size, 128)
-        self.numerical_bn1 = torch.nn.BatchNorm1d(128)
-        self.numerical_hidden = torch.nn.Linear(128, 64)
-        self.numerical_bn2 = torch.nn.BatchNorm1d(64)
-        self.numerical_output = torch.nn.Linear(64, 1)
-        self.numerical_residual = torch.nn.Linear(self.hidden_size, 64)
+        self.numerical_proj = nn.Linear(self.hidden_size, 128)
+        self.numerical_bn1 = nn.BatchNorm1d(128)
+        self.numerical_hidden = nn.Linear(128, 64)
+        self.numerical_bn2 = nn.BatchNorm1d(64)
+        self.numerical_output = nn.Linear(64, 1)
+        self.numerical_residual = nn.Linear(self.hidden_size, 64)
         
         # ESG Category Classification (matching training architecture)
-        self.category_proj = torch.nn.Linear(self.hidden_size, 64)
-        self.category_bn1 = torch.nn.BatchNorm1d(64)
-        self.category_hidden = torch.nn.Linear(64, 32)
-        self.category_bn2 = torch.nn.BatchNorm1d(32)
-        self.category_output = torch.nn.Linear(32, 3)
-        self.category_residual = torch.nn.Linear(self.hidden_size, 32)
+        self.category_proj = nn.Linear(self.hidden_size, 64)
+        self.category_bn1 = nn.BatchNorm1d(64)
+        self.category_hidden = nn.Linear(64, 32)
+        self.category_bn2 = nn.BatchNorm1d(32)
+        self.category_output = nn.Linear(32, 3)
+        self.category_residual = nn.Linear(self.hidden_size, 32)
         
     def forward(self, input_ids, attention_mask=None):
-        outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask)
+        # Get BERT embeddings with context awareness support
+        outputs = self.bert(
+            input_ids=input_ids,
+            attention_mask=attention_mask,
+            output_hidden_states=self.enable_context_awareness and self.context_module is not None,
+            output_attentions=False
+        )
+        
+        # Use pooled output as base
         pooled_output = outputs.pooler_output
+        
+        # Apply context-aware enhancement if enabled and available
+        if self.enable_context_awareness and self.context_module is not None:
+            hidden_states = outputs.last_hidden_state
+            context_output = self.context_module(hidden_states, attention_mask)
+            
+            # Use enhanced features as the main representation
+            enhanced_features = context_output['enhanced_features']
+            
+            # Combine with original pooled output for robustness
+            pooled_output = 0.7 * enhanced_features + 0.3 * pooled_output
+        
         pooled_output = self.dropout(pooled_output)
         
         # Task-specific predictions with residual connections (matching training architecture)
@@ -117,18 +172,18 @@ class LightweightESGModel(torch.nn.Module):
         
         # Numerical detection
         x2 = torch.nn.functional.relu(self.numerical_bn1(self.numerical_proj(pooled_output)))
-        x2 = torch.nn.functional.dropout(x2, p=0.2, training=self.training)
+        x2 = torch.nn.functional.dropout(x2, p=self.dropout.p, training=self.training)
         x2 = torch.nn.functional.relu(self.numerical_bn2(self.numerical_hidden(x2)))
-        x2 = torch.nn.functional.dropout(x2, p=0.2, training=self.training)
+        x2 = torch.nn.functional.dropout(x2, p=self.dropout.p, training=self.training)
         residual2 = self.numerical_residual(pooled_output)
         x2 = x2 + residual2
         numerical_logits = self.numerical_output(x2)
         
         # Category classification
         x3 = torch.nn.functional.relu(self.category_bn1(self.category_proj(pooled_output)))
-        x3 = torch.nn.functional.dropout(x3, p=0.2, training=self.training)
+        x3 = torch.nn.functional.dropout(x3, p=self.dropout.p, training=self.training)
         x3 = torch.nn.functional.relu(self.category_bn2(self.category_hidden(x3)))
-        x3 = torch.nn.functional.dropout(x3, p=0.2, training=self.training)
+        x3 = torch.nn.functional.dropout(x3, p=self.dropout.p, training=self.training)
         residual3 = self.category_residual(pooled_output)
         x3 = x3 + residual3
         category_logits = self.category_output(x3)
@@ -201,6 +256,95 @@ class ModelComparator:
             return_tensors='pt'
         )
     
+    def load_optimized_thresholds(self, threshold_file):
+        """Load optimized thresholds from threshold optimization results"""
+        if not os.path.exists(threshold_file):
+            return None
+        
+        try:
+            with open(threshold_file, 'r') as f:
+                threshold_data = json.load(f)
+            
+            # Extract optimal thresholds
+            thresholds = {}
+            if 'esg_indicator' in threshold_data:
+                esg_data = threshold_data['esg_indicator']
+                if isinstance(esg_data, dict):
+                    thresholds['esg_indicator'] = esg_data.get('optimal_threshold', 0.5)
+                else:
+                    thresholds['esg_indicator'] = float(esg_data) if esg_data is not None else 0.5
+            if 'numerical_detection' in threshold_data:
+                num_data = threshold_data['numerical_detection']
+                if isinstance(num_data, dict):
+                    thresholds['numerical_detection'] = num_data.get('optimal_threshold', 0.5)
+                else:
+                    thresholds['numerical_detection'] = float(num_data) if num_data is not None else 0.5
+            if 'category_classification' in threshold_data:
+                cat_data = threshold_data['category_classification']
+                if isinstance(cat_data, dict):
+                    thresholds['category_classification'] = cat_data.get('optimal_confidence_threshold', 0.5)
+                else:
+                    thresholds['category_classification'] = float(cat_data) if cat_data is not None else 0.5
+            
+            return thresholds
+        except Exception as e:
+            print(f"Warning: Could not load thresholds from {threshold_file}: {e}")
+            return None
+    
+    def apply_binary_threshold(self, probs, threshold):
+        """Apply custom threshold for binary classification"""
+        if probs.shape[1] > 1:
+            return (probs[:, 1] >= threshold).astype(int)
+        else:
+            return (probs.flatten() >= threshold).astype(int)
+    
+    def apply_confidence_threshold(self, probs, confidence_threshold):
+        """Apply confidence threshold for multiclass classification"""
+        max_probs = np.max(probs, axis=1)
+        pred_classes = np.argmax(probs, axis=1)
+        
+        # Set low-confidence predictions to a default class (e.g., 0)
+        confident_mask = max_probs >= confidence_threshold
+        pred_classes[~confident_mask] = 0  # Default to first class for low confidence
+        
+        return pred_classes
+    
+    def calculate_comprehensive_metrics(self, y_true, y_pred, y_probs, task_type):
+        """Calculate comprehensive metrics including multiple F1 computation methods"""
+        metrics = {
+            'accuracy': float(accuracy_score(y_true, y_pred)),
+            'f1_micro': float(f1_score(y_true, y_pred, average='micro')),
+            'f1_macro': float(f1_score(y_true, y_pred, average='macro')),
+            'f1_weighted': float(f1_score(y_true, y_pred, average='weighted')),
+            'precision': float(precision_recall_fscore_support(y_true, y_pred, average='macro')[0]),
+            'recall': float(precision_recall_fscore_support(y_true, y_pred, average='macro')[1]),
+            'precision_micro': float(precision_recall_fscore_support(y_true, y_pred, average='micro')[0]),
+            'recall_micro': float(precision_recall_fscore_support(y_true, y_pred, average='micro')[1])
+        }
+        
+        # Add task-specific metrics
+        if task_type == 'binary':
+            if len(np.unique(y_true)) > 1:
+                y_scores = y_probs[:, 1] if y_probs.shape[1] > 1 else y_probs.flatten()
+                metrics['auc'] = float(roc_auc_score(y_true, y_scores))
+                
+                # Per-class F1 scores
+                f1_per_class = f1_score(y_true, y_pred, average=None)
+                metrics['f1_class_0'] = float(f1_per_class[0]) if len(f1_per_class) > 0 else 0.0
+                metrics['f1_class_1'] = float(f1_per_class[1]) if len(f1_per_class) > 1 else 0.0
+            else:
+                metrics['auc'] = 0.0
+                metrics['f1_class_0'] = 0.0
+                metrics['f1_class_1'] = 0.0
+        
+        elif task_type == 'multiclass':
+            # Per-class F1 scores for multiclass
+            f1_per_class = f1_score(y_true, y_pred, average=None)
+            for i, f1_val in enumerate(f1_per_class):
+                metrics[f'f1_class_{i}'] = float(f1_val)
+        
+        return metrics
+    
     def evaluate_model(self, model, test_df, model_name):
         """Evaluate a single model on test data"""
         print(f"\nEvaluating {model_name}...")
@@ -245,37 +389,45 @@ class ModelComparator:
         numerical_probs = np.array(all_numerical_preds)
         category_probs = np.array(all_category_preds)
         
-        # Get predicted classes
-        esg_pred_classes = np.argmax(esg_probs, axis=1)
-        numerical_pred_classes = np.argmax(numerical_probs, axis=1)
-        category_pred_classes = np.argmax(category_probs, axis=1)
+        # Load optimized thresholds if available
+        threshold_file = 'results/threshold_optimization/optimized_thresholds.json'
+        optimized_thresholds = self.load_optimized_thresholds(threshold_file)
         
-        # Calculate metrics
+        # Get predicted classes using optimized thresholds
+        if optimized_thresholds:
+            print(f"Using optimized thresholds for {model_name}")
+            esg_pred_classes = self.apply_binary_threshold(
+                esg_probs, optimized_thresholds.get('esg_indicator', 0.5)
+            )
+            numerical_pred_classes = self.apply_binary_threshold(
+                numerical_probs, optimized_thresholds.get('numerical_detection', 0.5)
+            )
+            category_pred_classes = self.apply_confidence_threshold(
+                category_probs, optimized_thresholds.get('category_classification', 0.5)
+            )
+        else:
+            print(f"Using default thresholds (0.5) for {model_name}")
+            esg_pred_classes = np.argmax(esg_probs, axis=1)
+            numerical_pred_classes = np.argmax(numerical_probs, axis=1)
+            category_pred_classes = np.argmax(category_probs, axis=1)
+        
+        # Calculate comprehensive metrics with multiple F1 computation methods
         results = {
             'model_name': model_name,
-            'esg_indicator': {
-                'accuracy': accuracy_score(test_df['esg_indicator_label'], esg_pred_classes),
-                'f1_micro': f1_score(test_df['esg_indicator_label'], esg_pred_classes, average='micro'),
-                'f1_macro': f1_score(test_df['esg_indicator_label'], esg_pred_classes, average='macro'),
-                'precision': precision_recall_fscore_support(test_df['esg_indicator_label'], esg_pred_classes, average='macro')[0],
-                'recall': precision_recall_fscore_support(test_df['esg_indicator_label'], esg_pred_classes, average='macro')[1],
-                'auc': roc_auc_score(test_df['esg_indicator_label'], esg_probs[:, 1]) if len(np.unique(test_df['esg_indicator_label'])) > 1 else 0.0
+            'threshold_info': {
+                'esg_threshold': optimized_thresholds.get('esg_indicator', 0.5) if optimized_thresholds else 0.5,
+                'numerical_threshold': optimized_thresholds.get('numerical_detection', 0.5) if optimized_thresholds else 0.5,
+                'category_threshold': optimized_thresholds.get('category_classification', 0.5) if optimized_thresholds else 0.5
             },
-            'numerical_detection': {
-                'accuracy': accuracy_score(test_df['numerical_label'], numerical_pred_classes),
-                'f1_micro': f1_score(test_df['numerical_label'], numerical_pred_classes, average='micro'),
-                'f1_macro': f1_score(test_df['numerical_label'], numerical_pred_classes, average='macro'),
-                'precision': precision_recall_fscore_support(test_df['numerical_label'], numerical_pred_classes, average='macro')[0],
-                'recall': precision_recall_fscore_support(test_df['numerical_label'], numerical_pred_classes, average='macro')[1],
-                'auc': roc_auc_score(test_df['numerical_label'], numerical_probs[:, 1]) if len(np.unique(test_df['numerical_label'])) > 1 else 0.0
-            },
-            'category_classification': {
-                'accuracy': accuracy_score(test_df['category_label'], category_pred_classes),
-                'f1_micro': f1_score(test_df['category_label'], category_pred_classes, average='micro'),
-                'f1_macro': f1_score(test_df['category_label'], category_pred_classes, average='macro'),
-                'precision': precision_recall_fscore_support(test_df['category_label'], category_pred_classes, average='macro')[0],
-                'recall': precision_recall_fscore_support(test_df['category_label'], category_pred_classes, average='macro')[1]
-            },
+            'esg_indicator': self.calculate_comprehensive_metrics(
+                 test_df['esg_indicator_label'], esg_pred_classes, esg_probs, 'binary'
+             ),
+            'numerical_detection': self.calculate_comprehensive_metrics(
+                test_df['numerical_label'], numerical_pred_classes, numerical_probs, 'binary'
+            ),
+            'category_classification': self.calculate_comprehensive_metrics(
+                test_df['category_label'], category_pred_classes, category_probs, 'multiclass'
+            ),
             'predictions': {
                 'esg_indicator': esg_pred_classes.tolist(),
                 'numerical_detection': numerical_pred_classes.tolist(),
@@ -438,10 +590,10 @@ class ModelComparator:
     
     def generate_detailed_report(self, base_results, finetuned_results, test_df):
         """Generate detailed comparison report"""
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        evaluation_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         
         report = {
-            'evaluation_timestamp': timestamp,
+            'evaluation_date': evaluation_date,
             'test_dataset_size': len(test_df),
             'base_model_results': base_results,
             'finetuned_model_results': finetuned_results,
@@ -464,10 +616,10 @@ class ModelComparator:
         }
         
         # Save detailed report
-        with open(f'{self.results_dir}/detailed_comparison_report_{timestamp}.json', 'w') as f:
+        with open(f'{self.results_dir}/detailed_comparison_report.json', 'w') as f:
             json.dump(report, f, indent=2)
         
-        print(f"\nDetailed report saved to {self.results_dir}/detailed_comparison_report_{timestamp}.json")
+        print(f"\nDetailed report saved to {self.results_dir}/detailed_comparison_report.json")
         return report
     
     def run_comparison(self):
@@ -483,18 +635,65 @@ class ModelComparator:
         base_model = BaseFinBERTModel()
         
         # Load fine-tuned model
-        finetuned_model = LightweightESGModel()
         finetuned_model_path = 'models/finbert_esg/best_lightweight_model/model.pt'
         
         if os.path.exists(finetuned_model_path):
             print(f"Loading fine-tuned model weights from {finetuned_model_path}")
             checkpoint = torch.load(finetuned_model_path, map_location=self.device, weights_only=False)
-            finetuned_model.load_state_dict(checkpoint['model_state_dict'])
-            print("✓ Fine-tuned model weights loaded successfully")
+            
+            # Initialize model with same parameters as training
+            finetuned_model = LightweightESGModel(
+                model_name='ProsusAI/finbert',
+                num_indicators=47,  # Match the saved model
+                dropout_rate=0.4,
+                enable_context_awareness=True
+            )
+            
+            try:
+                # Try loading with context-aware architecture
+                model_state_dict = checkpoint.get('model_state_dict', checkpoint)
+                
+                # Filter state dict to match model architecture
+                filtered_state_dict = {}
+                model_keys = set(finetuned_model.state_dict().keys())
+                
+                for key, value in model_state_dict.items():
+                    if key in model_keys:
+                        filtered_state_dict[key] = value
+                    else:
+                        print(f"Skipping key: {key} (not in model architecture)")
+                
+                finetuned_model.load_state_dict(filtered_state_dict, strict=False)
+                print("✓ Fine-tuned model weights loaded successfully with context-aware architecture")
+                
+            except Exception as e:
+                print(f"Failed to load with context-aware architecture: {e}")
+                print("Trying fallback without context awareness...")
+                
+                # Fallback: try without context awareness
+                finetuned_model = LightweightESGModel(
+                    model_name='ProsusAI/finbert',
+                    num_indicators=47,  # Match the saved model
+                    dropout_rate=0.4,
+                    enable_context_awareness=False
+                )
+                
+                model_state_dict = checkpoint.get('model_state_dict', checkpoint)
+                filtered_state_dict = {k: v for k, v in model_state_dict.items() 
+                                     if k in finetuned_model.state_dict()}
+                
+                finetuned_model.load_state_dict(filtered_state_dict, strict=False)
+                print("✓ Fine-tuned model weights loaded successfully (fallback mode)")
         else:
             print(f"⚠️  Warning: Trained model weights not found at {finetuned_model_path}")
             print("   Using randomly initialized fine-tuned architecture for comparison")
             print("   This comparison shows architectural differences, not training benefits")
+            finetuned_model = LightweightESGModel(
+                model_name='ProsusAI/finbert',
+                num_indicators=47,  # Match the saved model
+                dropout_rate=0.4,
+                enable_context_awareness=True
+            )
         
         # Evaluate both models
         base_results = self.evaluate_model(base_model, test_df, "Base FinBERT")

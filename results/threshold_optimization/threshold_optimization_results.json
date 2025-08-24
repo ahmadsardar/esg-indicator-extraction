@@ -1,0 +1,30 @@
+{
+  "esg_indicator": {
+    "task_name": "ESG Indicator Detection",
+    "optimal_threshold": 0.8808536529541016,
+    "optimal_f1_score": 0.8528601970048552,
+    "precision_at_optimal": 0.7434666666666667,
+    "recall_at_optimal": 1.0,
+    "average_precision": 0.6965145707446572,
+    "default_threshold_f1": 0.8528602018966045,
+    "improvement": -4.891749338931106e-09
+  },
+  "numerical_detection": {
+    "task_name": "Numerical Detection",
+    "optimal_threshold": 0.7218259572982788,
+    "optimal_f1_score": 0.9834752078193304,
+    "precision_at_optimal": 0.9879275653923542,
+    "recall_at_optimal": 0.9790628115653041,
+    "average_precision": 0.9974710236975161,
+    "default_threshold_f1": 0.979632389468455,
+    "improvement": 0.00384281835087541
+  },
+  "category_classification": {
+    "task_name": "Category Classification",
+    "optimal_confidence_threshold": 0.6500000000000001,
+    "optimal_f1_score": 0.3329944639888391,
+    "coverage_at_optimal": 0.5888,
+    "default_f1": 0.3327927629501899,
+    "improvement": 0.00020170103864919353
+  }
+}

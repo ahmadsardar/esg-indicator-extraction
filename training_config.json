@@ -1,0 +1,12 @@
+{
+  "model_name": "ProsusAI/finbert",
+  "max_length": 128,
+  "learning_rate": 2e-05,
+  "batch_size": 8,
+  "num_epochs": 3,
+  "gradient_accumulation_steps": 2,
+  "early_stopping_patience": 3,
+  "enable_context_awareness": true,
+  "random_seed": 42,
+  "timestamp": "2025-08-24T16:58:53.600920"
+}

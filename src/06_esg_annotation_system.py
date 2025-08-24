@@ -860,7 +860,6 @@ class ESGAnnotationSystem:
     
     def save_annotations(self, enhanced_df: pd.DataFrame, splits: Dict[str, pd.DataFrame], stats: Dict):
         """Save all annotation results with standardized filenames (no timestamps)"""
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         
         # Save complete enhanced dataset with standardized name
         enhanced_path = self.annotations_dir / 'enhanced_esg_annotations.csv'
@@ -898,7 +897,7 @@ class ESGAnnotationSystem:
         
         # Save annotation summary
         summary = {
-            'timestamp': timestamp,
+            'annotation_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
             'total_samples_annotated': len(enhanced_df),
             'training_samples': len(splits['train']) if 'train' in splits and len(splits['train']) > 0 else 0,
             'validation_samples': len(splits['validation']) if 'validation' in splits and len(splits['validation']) > 0 else 0,
