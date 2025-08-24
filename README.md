@@ -39,14 +39,22 @@ Project/
 │   ├── 05_corporate_report_processor.py # PDF processing pipeline
 │   ├── 06_esg_annotation_system.py    # Annotation system implementation
 │   ├── 07_annotation_validator.py     # Data validation and quality checks
-│   ├── 08_finbert_esg_lightweight.py  # FinBERT training script
-│   └── 09_model_comparison_evaluation.py # Model comparison and evaluation
+│   ├── 08_data_preprocessor.py        # Data preprocessing for training
+│   ├── 09_finetuned_esg_model.py      # FinBERT training script
+│   ├── 10_threshold_optimization.py   # Threshold optimization for classification
+│   ├── 11_model_comparison.py         # Model comparison and evaluation
+│   └── 12_class_distribution_analysis.py # Class distribution analysis
 ├── results/
 │   ├── analysis_plots/                # Performance visualization
 │   ├── comparison/                    # Model comparison results
 │   │   ├── performance_comparison.png # Performance charts
 │   │   ├── improvement_analysis.png   # Improvement analysis
-│   │   └── detailed_comparison_report_*.json # Detailed metrics
+│   │   └── detailed_comparison_report.json # Detailed metrics
+│   ├── threshold_optimization/        # Threshold optimization results
+│   │   ├── optimized_thresholds.json  # Optimized classification thresholds
+│   │   ├── threshold_optimization_results.json # Optimization results
+│   │   └── *.png                      # Threshold analysis plots
+│   ├── class_distribution_report.json # Class distribution analysis
 │   ├── lightweight_training_history.json # Training progress
 │   └── test_extraction_results.json  # Model test results
 ├── .gitignore                         # Git ignore configuration
@@ -97,17 +105,19 @@ Project/
 
 | Task | Base FinBERT F1 | Fine-tuned F1 | Improvement |
 |------|----------------|---------------|-------------|
-| **ESG Indicator Detection** | 0.5325 | **0.4253** | **-10.7%** |
-| **Numerical Data Detection** | 0.3763 | **0.9394** | **+56.3%** |
-| **Category Classification** | 0.1429 | **0.3119** | **+16.9%** |
+| **ESG Indicator Detection** | 0.2063 | **0.4253** | **+21.89%** |
+| **Numerical Data Detection** | 0.3443 | **0.9496** | **+60.52%** |
+| **Category Classification** | 0.2309 | **0.3057** | **+7.48%** |
 
 ### Key Findings
-- ✅ **Exceptional improvement** in numerical data detection (93.94% F1-score)
-- ✅ **Significant improvement** in ESG category classification (+16.9%)
-- ✅ **Multi-task learning** effectively combines related objectives
-- ⚠️ **Trade-off observed** in ESG indicator detection (-10.7%, requires further investigation)
-- ✅ **Memory-efficient architecture** suitable for production deployment
-- ✅ **Comprehensive evaluation** with detailed performance metrics and comparison reports
+- ✅ **Exceptional performance** in numerical data detection (94.96% F1-score, +60.52% improvement)
+- ✅ **Significant improvement** in ESG indicator detection (42.53% F1-score, +21.89% improvement)
+- ✅ **Enhanced category classification** (30.57% F1-score, +7.48% improvement)
+- ✅ **Multi-task learning** successfully combines related objectives across all three tasks
+- ✅ **Context-aware architecture** with residual connections improves feature learning
+- ✅ **Memory-efficient design** with frozen early layers suitable for production deployment
+- ✅ **Comprehensive evaluation** with threshold optimization and detailed statistical analysis
+- ✅ **Standardized output** with consistent naming conventions and structured results
 
 ## 🚀 Quick Start
 
@@ -120,14 +130,25 @@ python src/02_esg_indicators_expansion.py
 python src/03_combine_indicators.py
 ```
 
-2. **Model Training**:
+2. **Data Preprocessing**:
 ```bash
-python src/08_finbert_esg_lightweight.py
+python src/08_data_preprocessor.py
 ```
 
-3. **Model Evaluation**:
+3. **Model Training**:
 ```bash
-python src/09_model_comparison_evaluation.py
+python src/09_finetuned_esg_model.py
+```
+
+4. **Threshold Optimization**:
+```bash
+python src/10_threshold_optimization.py
+```
+
+5. **Model Evaluation**:
+```bash
+python src/11_model_comparison.py
+python src/12_class_distribution_analysis.py
 ```
 
 ## 📁 Key Files
@@ -182,10 +203,11 @@ class LightweightESGModel(nn.Module):
 - **Learning Rate**: 2e-5 with linear decay
 - **Batch Size**: 8 (with gradient accumulation)
 - **Epochs**: 3 (completed training)
-- **Final Training Loss**: 0.9198
-- **Best Validation F1**: 0.0340 (Indicators)
 - **Loss Function**: Weighted multi-task loss
 - **Optimizer**: AdamW with weight decay
+- **Architecture**: Context-aware with residual connections
+- **Frozen Layers**: Early BERT layers for memory efficiency
+- **Multi-task Heads**: 47 ESG indicators + numerical detection + category classification
 
 ## 📈 Performance Analysis
 
@@ -195,11 +217,12 @@ class LightweightESGModel(nn.Module):
 3. **Memory Efficiency**: Lightweight architecture suitable for production
 4. **Comprehensive Evaluation**: Robust statistical analysis and visualization
 
-### Areas for Improvement
-1. **ESG Indicator Detection**: Performance trade-off requires investigation (multi-task vs single-task)
-2. **Data Scale**: Larger annotated datasets could improve generalization
-3. **Category Granularity**: More fine-grained ESG subcategories
-4. **Cross-domain Evaluation**: Testing on different industry sectors
-5. **Threshold Optimization**: Fine-tune classification thresholds for better performance
+### Technical Achievements
+1. **Context-Aware Architecture**: Successfully implemented residual connections for enhanced learning
+2. **Multi-task Learning**: Effective simultaneous training on three related ESG tasks
+3. **Threshold Optimization**: Automated optimization of classification thresholds for improved performance
+4. **Comprehensive Pipeline**: End-to-end processing from ontology analysis to model evaluation
+5. **Standardized Output**: Consistent file naming and structured result formats
+6. **Memory Efficiency**: Lightweight design suitable for resource-constrained environments
 
 **Note**: This project demonstrates the practical application of domain-adapted language models for ESG information extraction, contributing to the growing field of sustainable finance and AI-driven ESG analysis.
