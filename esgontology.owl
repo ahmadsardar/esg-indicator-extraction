@@ -1,0 +1,1521 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.annasvijaya.com/ESGOnt/esgontologi#"
+     xml:base="http://www.annasvijaya.com/ESGOnt/esgontology"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:schema="http://schema.org/">
+    <owl:Ontology rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology">
+        <owl:imports rdf:resource="http://metadata.un.org/sdg/ontology"/>
+        <rdfs:comment>ESGOnt Ontology for ESG management and SDG alignment</rdfs:comment>
+        <rdfs:label>ESGOnt</rdfs:label>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#associatesWith -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#associatesWith">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#belongsToCategory -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#belongsToCategory">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#PerformanceIndicator"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#categorizedAs -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#categorizedAs">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#WasteOutput"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#WasteCategory"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#consumesEnergy -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#consumesEnergy">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#consumesWater -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#consumesWater">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#OperationalUnit"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#WaterUsage"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#contributesTo -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#contributesTo">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#DisclosureStandard"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#SDG"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#determineCM -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#determineCM">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityScore"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#CategoryMaturity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#determineDM -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#determineDM">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityScore"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#DomainMaturity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#determineML -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#determineML">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityScore"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityLevel"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#generatesWaste -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#generatesWaste">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#OperationalUnit"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#WasteOutput"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#guidesAction -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#guidesAction">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#DisclosureStandard"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Action"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasAssessmentQuery -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasAssessmentQuery">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasAssessmentValue -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasAssessmentValue">
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#CalculatedValue"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasCM -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasCM">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Organization"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#CategoryMaturity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasCalcUnit -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasCalcUnit">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Calculation"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Unit"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasCategory -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasCategory">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Organization"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasCause -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasCause">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#CausalRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasCriteria -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasCriteria">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Weight"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Criteria"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasCurrentCM -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasCurrentCM">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#CategoryMaturity"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#CurrentCategoryMaturity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasDM -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasDM">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Organization"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#DomainMaturity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasDomain -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasDomain">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Domain"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasEffect -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasEffect">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#CausalRelationship"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasMI -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasMI">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Objective"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityIndicator"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasML -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasML">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Organization"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityLevel"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasMaturityScore -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasMaturityScore">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#CategoryMaturity"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityScore"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasObjective -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasObjective">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Organization"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Objective"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasOperationalUnit -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasOperationalUnit">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Organization"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#OperationalUnit"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasReValue -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasReValue">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#ReportingValue"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasRecommendedAction -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasRecommendedAction">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Organization"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Action"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasTarget -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasTarget">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Action"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#SDG"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasTargetCM -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasTargetCM">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#CategoryMaturity"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#TargetCategoryMaturity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasUnit -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasUnit">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#ReportingValue"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Unit"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasValue -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasValue">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasWOCalculation -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasWOCalculation">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#WasteOutput"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Calculation"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasWUCalculation -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasWUCalculation">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#WaterUsage"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Calculation"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#hasWeight -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#hasWeight">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Weight"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#impacts -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#impacts">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#SDG"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#influencesIndicator -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#influencesIndicator">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#DisclosureStandard"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#PerformanceIndicator"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#influencesMI -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#influencesMI">
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#DisclosureStandard"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityIndicator"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#isDerivedFromIndicator -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#isDerivedFromIndicator">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#CalculatedValue"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#PerformanceIndicator"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#isLinkedTo -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#isLinkedTo">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Organization"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#isRecommendedFor -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#isRecommendedFor">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Action"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#isValueOfIndicator -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#isValueOfIndicator">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#ReportingValue"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#PerformanceIndicator"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#meetsMI -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#meetsMI">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityScore"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityIndicator"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#processedBy -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#processedBy">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#WasteOutput"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#WasteProcessing"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#resultsIn -->
+
+    <owl:ObjectProperty rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#resultsIn">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:domain rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#WasteProcessing"/>
+        <rdfs:range rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#ProcessedMaterial"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://metadata.un.org/sdg/ontology#Goal -->
+
+    <rdf:Description rdf:about="http://metadata.un.org/sdg/ontology#Goal">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#SDG"/>
+    </rdf:Description>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Access_to_Basic_Services -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Access_to_Basic_Services">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Access_to_Healthcare -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Access_to_Healthcare">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Action -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Action"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Animal_Welfare -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Animal_Welfare">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Anti-competitive_Practices -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Anti-competitive_Practices">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Audit -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Audit">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Biodiversity -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Biodiversity">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Board -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Board">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Board_Diversity -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Board_Diversity">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Business_Ethics -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Business_Ethics">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#CalculatedValue -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#CalculatedValue"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Calculation -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Calculation"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Category -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#CategoryMaturity -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#CategoryMaturity"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#CausalRelationship -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#CausalRelationship"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Chairperson-CEO_Separation -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Chairperson-CEO_Separation">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Child_Labor -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Child_Labor">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Climate_Risk_Mgmt. -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Climate_Risk_Mgmt.">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Clinical_Trials -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Clinical_Trials">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Collective_Bargaining -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Collective_Bargaining">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Community_and_Society -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Community_and_Society">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Corporate_Governance -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Corporate_Governance">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Corruption -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Corruption">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Criteria -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Criteria"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#CurrentCategoryMaturity -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#CurrentCategoryMaturity"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Customer_Relationship -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Customer_Relationship">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#DisclosureStandard -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#DisclosureStandard"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Diversity -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Diversity">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Domain -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Domain"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#DomainMaturity -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#DomainMaturity"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#ESG_Incentives -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#ESG_Incentives">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#ESRSStandard -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#ESRSStandard">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#DisclosureStandard"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Electromagnetic_Fields -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Electromagnetic_Fields">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Employee_Development -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Employee_Development">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Employee_Turnover -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Employee_Turnover">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Energy -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Energy">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Environmental -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Environmental">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Domain"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Fines -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Fines">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Mgmt._System -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Mgmt._System">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Policy -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Policy">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Reporting -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Reporting">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Financial_Inclusion -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Financial_Inclusion">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Forests -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Forests">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#GHG_Emissions -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#GHG_Emissions">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#GHG_Policies -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#GHG_Policies">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#GMOs -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#GMOs">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#GRIStandard -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#GRIStandard">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#DisclosureStandard"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Global_Compact_Membership -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Global_Compact_Membership">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Governance -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Governance">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Domain"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Green_Buildings -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Green_Buildings">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Green_Products -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Green_Products">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#HIV_Programs -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#HIV_Programs">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Hazardous_Waste -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Hazardous_Waste">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Health_and_Safety -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Health_and_Safety">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Human_Rights -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Human_Rights">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Indigenous_Rights -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Indigenous_Rights">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Labor_Practices -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Labor_Practices">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Lobbying -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Lobbying">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#MaturityIndicator -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityIndicator"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#MaturityLevel -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityLevel"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#MaturityScore -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityScore"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Non-GHG_Air_Emissions -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Non-GHG_Air_Emissions">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Objective -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Objective"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#OperationalUnit -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#OperationalUnit"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Organization -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Organization"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Ozone-Depleting_Gases -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Ozone-Depleting_Gases">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Packaging -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Packaging">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#PerformanceIndicator -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#PerformanceIndicator"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Philanthropy -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Philanthropy">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Privacy_and_IT -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Privacy_and_IT">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#ProcessedMaterial -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#ProcessedMaterial"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Product_Safety -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Product_Safety">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Public_Health -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Public_Health">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Remuneration -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Remuneration">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#ReportingValue -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#ReportingValue"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Reporting_Quality -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Reporting_Quality">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Resource_Efficiency -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Resource_Efficiency">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Responsible_Marketing -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Responsible_Marketing">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#SASBStandard -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#SASBStandard">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#DisclosureStandard"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#SDG -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#SDG"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Shareholders -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Shareholders">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Site_Closure -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Site_Closure">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Social -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Social">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Domain"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Supply_Chain -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Supply_Chain">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Sustainable_Finance -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Sustainable_Finance">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Systemic_Risk -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Systemic_Risk">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#TargetCategoryMaturity -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#TargetCategoryMaturity"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Taxes -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Taxes">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Toxic_Spills -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Toxic_Spills">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Unions -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Unions">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Unit -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Unit"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Waste -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Waste">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#WasteCategory -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WasteCategory"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#WasteOutput -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WasteOutput"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#WasteProcessing -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WasteProcessing"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#WasteRecycling -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WasteRecycling">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Action"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#WasteReduction -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WasteReduction">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Action"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Water -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Water">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#WaterEfficiency -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WaterEfficiency">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Action"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#WaterRecycling -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WaterRecycling">
+        <rdfs:subClassOf rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Action"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#WaterUsage -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WaterUsage"/>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#Weight -->
+
+    <owl:Class rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Weight"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode1">
+        <rdf:type rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode"/>
+        <hasAssessmentValue rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#CalculatedValue1"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode2">
+        <rdf:type rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode"/>
+        <hasAssessmentValue rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#CalculatedValue2"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#CalculatedValue1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#CalculatedValue1">
+        <rdf:type rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#CalculatedValue"/>
+        <isDerivedFromIndicator rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#EnergyEfficiency"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#CalculatedValue2 -->
+
+    <owl:NamedIndividual rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#CalculatedValue2">
+        <rdf:type rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#CalculatedValue"/>
+        <isDerivedFromIndicator rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#WasteReductionIndicator"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#EnergyEfficiency -->
+
+    <owl:NamedIndividual rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#EnergyEfficiency">
+        <rdf:type rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#PerformanceIndicator"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#MNE1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#MNE1">
+        <rdf:type rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Organization"/>
+        <isLinkedTo rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode1"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#MNE1_Energy -->
+
+    <owl:NamedIndividual rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#MNE1_Energy">
+        <rdf:type rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Energy"/>
+        <impacts rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#SDG7"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#SDG12 -->
+
+    <owl:NamedIndividual rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#SDG12">
+        <rdf:type rdf:resource="http://metadata.un.org/sdg/ontology#Goal"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#SDG7 -->
+
+    <owl:NamedIndividual rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#SDG7">
+        <rdf:type rdf:resource="http://metadata.un.org/sdg/ontology#Goal"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#SME1 -->
+
+    <owl:NamedIndividual rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#SME1">
+        <rdf:type rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Organization"/>
+        <isLinkedTo rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode2"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#SME1_Waste -->
+
+    <owl:NamedIndividual rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#SME1_Waste">
+        <rdf:type rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#Waste"/>
+        <impacts rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#SDG12"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.annasvijaya.com/ESGOnt/esgontology#WasteReductionIndicator -->
+
+    <owl:NamedIndividual rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WasteReductionIndicator">
+        <rdf:type rdf:resource="http://www.annasvijaya.com/ESGOnt/esgontology#PerformanceIndicator"/>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // General axioms
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Access_to_Basic_Services"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Access_to_Healthcare"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Animal_Welfare"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Anti-competitive_Practices"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Audit"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Biodiversity"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Board"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Board_Diversity"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Business_Ethics"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Chairperson-CEO_Separation"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Child_Labor"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Climate_Risk_Mgmt."/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Clinical_Trials"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Collective_Bargaining"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Community_and_Society"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Corporate_Governance"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Corruption"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Customer_Relationship"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Diversity"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#ESG_Incentives"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Electromagnetic_Fields"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Employee_Development"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Employee_Turnover"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Energy"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Fines"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Mgmt._System"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Policy"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Environmental_Reporting"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Financial_Inclusion"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Forests"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#GHG_Emissions"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#GHG_Policies"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#GMOs"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Global_Compact_Membership"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Green_Buildings"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Green_Products"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#HIV_Programs"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Hazardous_Waste"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Health_and_Safety"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Human_Rights"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Indigenous_Rights"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Labor_Practices"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Lobbying"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Non-GHG_Air_Emissions"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Ozone-Depleting_Gases"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Packaging"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Philanthropy"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Privacy_and_IT"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Product_Safety"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Public_Health"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Remuneration"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Reporting_Quality"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Resource_Efficiency"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Responsible_Marketing"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Shareholders"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Site_Closure"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Supply_Chain"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Sustainable_Finance"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Systemic_Risk"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Taxes"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Toxic_Spills"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Unions"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Waste"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Water"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Action"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#AssessmentNode"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#CalculatedValue"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Calculation"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Category"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#CategoryMaturity"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#CausalRelationship"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Criteria"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#CurrentCategoryMaturity"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#DisclosureStandard"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Domain"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#DomainMaturity"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityIndicator"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityLevel"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#MaturityScore"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Objective"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#OperationalUnit"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Organization"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#PerformanceIndicator"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#ProcessedMaterial"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#ReportingValue"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#SDG"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#TargetCategoryMaturity"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Unit"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WasteCategory"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WasteOutput"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WasteProcessing"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WaterUsage"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Weight"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#ESRSStandard"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#GRIStandard"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#SASBStandard"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Environmental"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Governance"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#Social"/>
+        </owl:members>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WasteRecycling"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WasteReduction"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WaterEfficiency"/>
+            <rdf:Description rdf:about="http://www.annasvijaya.com/ESGOnt/esgontology#WaterRecycling"/>
+        </owl:members>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi -->
+

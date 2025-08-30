@@ -29,7 +29,7 @@ Project/
 ├── models/
 │   ├── baseline/                      # Baseline extraction methods
 │   ├── finbert_esg/                   # Fine-tuned FinBERT model & tokenizer
-│   │   └── best_lightweight_model/    # Trained model weights (model.pt)
+│   │   └── best_lightweight_model/    # Model configuration and tokenizer files
 │   └── evaluation/                    # Model evaluation scripts
 ├── src/
 │   ├── 01_ontology_analyzer.py        # ESG ontology parsing and analysis
@@ -45,20 +45,18 @@ Project/
 │   ├── 11_model_comparison.py         # Model comparison and evaluation
 │   └── 12_class_distribution_analysis.py # Class distribution analysis
 ├── results/
-│   ├── analysis_plots/                # Performance visualization
+│   ├── analysis_plots/                # Performance visualization (plots excluded from repo)
 │   ├── comparison/                    # Model comparison results
-│   │   ├── performance_comparison.png # Performance charts
-│   │   ├── improvement_analysis.png   # Improvement analysis
-│   │   └── detailed_comparison_report.json # Detailed metrics
+│   │   └── detailed_comparison_report.json # Detailed metrics and performance data
 │   ├── threshold_optimization/        # Threshold optimization results
 │   │   ├── optimized_thresholds.json  # Optimized classification thresholds
-│   │   ├── threshold_optimization_results.json # Optimization results
-│   │   └── *.png                      # Threshold analysis plots
+│   │   └── threshold_optimization_results.json # Optimization results
 │   ├── class_distribution_report.json # Class distribution analysis
 │   ├── lightweight_training_history.json # Training progress
 │   └── test_extraction_results.json  # Model test results
 ├── .gitignore                         # Git ignore configuration
 ├── requirements.txt                   # Python dependencies
+├── requirements_lock.txt              # Locked dependency versions
 ├── esgontology.owl                    # ESG ontology definition
 └── README.md                          # Project documentation
 ```
@@ -153,10 +151,13 @@ python src/12_class_distribution_analysis.py
 
 ## 📁 Key Files
 
-- **`models/finbert_esg/best_lightweight_model/model.pt`**: Trained model weights
-- **`results/comparison/`**: Comprehensive evaluation results and visualizations
+- **`models/finbert_esg/best_lightweight_model/`**: Model configuration and tokenizer files (trained weights excluded from repo)
+- **`results/comparison/detailed_comparison_report.json`**: Comprehensive evaluation results and metrics
+- **`results/threshold_optimization/`**: Threshold optimization results and configurations
 - **`esgontology.owl`**: ESG ontology definition file
 - **`docs/`**: Detailed documentation and guidelines
+
+**Note**: Large model files (*.pt, *.bin) and visualization plots (*.png, *.jpg) are excluded from the repository but generated during training and evaluation.
 
 ## ESG Indicators Framework
 **Comprehensive Indicator Set**: 47 indicators across three categories
