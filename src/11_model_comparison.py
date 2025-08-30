@@ -32,13 +32,13 @@ if os.path.exists(context_module_path):
     context_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(context_module)
     
-    # Import context-aware classes
+
     ESGContextAwareModule = context_module.ESGContextAwareModule
     ESGSemanticEnhancer = context_module.ESGSemanticEnhancer
     ContextAwareTrainingMixin = context_module.ContextAwareTrainingMixin
     create_context_aware_enhancement = context_module.create_context_aware_enhancement
 else:
-    # Fallback if context module not found
+
     ESGContextAwareModule = None
     ESGSemanticEnhancer = None
     ContextAwareTrainingMixin = None
@@ -58,7 +58,7 @@ class BaseFinBERTModel(torch.nn.Module):
         self.config = AutoConfig.from_pretrained(model_name)
         self.bert = AutoModel.from_pretrained(model_name)
         
-        # Simple classification heads for comparison
+
         self.esg_indicator_head = torch.nn.Linear(self.config.hidden_size, 2)  # Binary
         self.numerical_head = torch.nn.Linear(self.config.hidden_size, 2)      # Binary
         self.category_head = torch.nn.Linear(self.config.hidden_size, 3)       # E, S, G
@@ -90,14 +90,14 @@ class LightweightESGModel(nn.Module):
         self.bert = AutoModel.from_pretrained(model_name)
         self.enable_context_awareness = enable_context_awareness
         
-        # Freeze early layers for efficiency
+
         for param in self.bert.embeddings.parameters():
             param.requires_grad = False
         for i in range(6):
             for param in self.bert.encoder.layer[i].parameters():
                 param.requires_grad = False
         
-        # Match the exact architecture from training script
+
         self.hidden_size = self.config.hidden_size
         self.dropout = nn.Dropout(dropout_rate)
         
@@ -454,13 +454,15 @@ class ModelComparator:
         # Set up the plotting style
         plt.rcParams['figure.figsize'] = (15, 10)
         plt.rcParams['font.size'] = 12
+        plt.rcParams['axes.titlepad'] = 20
         
         # 1. Overall Performance Comparison
-        fig, axes = plt.subplots(2, 2, figsize=(16, 12))
-        fig.suptitle('FinBERT vs Fine-tuned ESG Model Performance Comparison', fontsize=16, fontweight='bold')
+        fig, axes = plt.subplots(2, 2, figsize=(18, 14))
+        fig.suptitle('FinBERT vs Fine-tuned ESG Model Performance Comparison', 
+                    fontsize=18, fontweight='bold', y=0.95)
         
         # F1 Score Comparison
-        tasks = ['ESG Indicator', 'Numerical Detection', 'Category Classification']
+        tasks = ['ESG\nIndicator', 'Numerical\nDetection', 'Category\nClassification']
         base_f1 = [
             base_results['esg_indicator']['f1_macro'],
             base_results['numerical_detection']['f1_macro'],
@@ -475,15 +477,26 @@ class ModelComparator:
         x = np.arange(len(tasks))
         width = 0.35
         
-        axes[0, 0].bar(x - width/2, base_f1, width, label='Base FinBERT', alpha=0.8, color='skyblue')
-        axes[0, 0].bar(x + width/2, finetuned_f1, width, label='Fine-tuned ESG', alpha=0.8, color='lightcoral')
-        axes[0, 0].set_xlabel('Tasks')
-        axes[0, 0].set_ylabel('F1 Score (Macro)')
-        axes[0, 0].set_title('F1 Score Comparison')
+        bars1 = axes[0, 0].bar(x - width/2, base_f1, width, label='Base FinBERT', alpha=0.8, color='#4472C4')
+        bars2 = axes[0, 0].bar(x + width/2, finetuned_f1, width, label='Fine-tuned ESG', alpha=0.8, color='#E15759')
+        axes[0, 0].set_xlabel('Tasks', fontsize=11, fontweight='bold')
+        axes[0, 0].set_ylabel('F1 Score (Macro)', fontsize=11, fontweight='bold')
+        axes[0, 0].set_title('F1 Score Comparison', fontsize=12, fontweight='bold', pad=15)
         axes[0, 0].set_xticks(x)
-        axes[0, 0].set_xticklabels(tasks, rotation=45, ha='right')
-        axes[0, 0].legend()
-        axes[0, 0].grid(True, alpha=0.3)
+        axes[0, 0].set_xticklabels(tasks, fontsize=10, ha='center')
+        axes[0, 0].legend(fontsize=10, loc='upper left')
+        axes[0, 0].grid(True, alpha=0.3, axis='y')
+        axes[0, 0].set_ylim(0, max(max(base_f1), max(finetuned_f1)) * 1.1)
+        
+        # Add value labels on bars
+        for bar in bars1:
+            height = bar.get_height()
+            axes[0, 0].text(bar.get_x() + bar.get_width()/2., height + 0.01,
+                           f'{height:.3f}', ha='center', va='bottom', fontsize=9)
+        for bar in bars2:
+            height = bar.get_height()
+            axes[0, 0].text(bar.get_x() + bar.get_width()/2., height + 0.01,
+                           f'{height:.3f}', ha='center', va='bottom', fontsize=9)
         
         # Accuracy Comparison
         base_acc = [
@@ -497,17 +510,28 @@ class ModelComparator:
             finetuned_results['category_classification']['accuracy']
         ]
         
-        axes[0, 1].bar(x - width/2, base_acc, width, label='Base FinBERT', alpha=0.8, color='skyblue')
-        axes[0, 1].bar(x + width/2, finetuned_acc, width, label='Fine-tuned ESG', alpha=0.8, color='lightcoral')
-        axes[0, 1].set_xlabel('Tasks')
-        axes[0, 1].set_ylabel('Accuracy')
-        axes[0, 1].set_title('Accuracy Comparison')
+        bars3 = axes[0, 1].bar(x - width/2, base_acc, width, label='Base FinBERT', alpha=0.8, color='#4472C4')
+        bars4 = axes[0, 1].bar(x + width/2, finetuned_acc, width, label='Fine-tuned ESG', alpha=0.8, color='#E15759')
+        axes[0, 1].set_xlabel('Tasks', fontsize=11, fontweight='bold')
+        axes[0, 1].set_ylabel('Accuracy', fontsize=11, fontweight='bold')
+        axes[0, 1].set_title('Accuracy Comparison', fontsize=12, fontweight='bold', pad=15)
         axes[0, 1].set_xticks(x)
-        axes[0, 1].set_xticklabels(tasks, rotation=45, ha='right')
-        axes[0, 1].legend()
-        axes[0, 1].grid(True, alpha=0.3)
+        axes[0, 1].set_xticklabels(tasks, fontsize=10, ha='center')
+        axes[0, 1].legend(fontsize=10, loc='upper left')
+        axes[0, 1].grid(True, alpha=0.3, axis='y')
+        axes[0, 1].set_ylim(0, max(max(base_acc), max(finetuned_acc)) * 1.1)
         
-        # Precision-Recall Comparison
+        # Add value labels on bars
+        for bar in bars3:
+            height = bar.get_height()
+            axes[0, 1].text(bar.get_x() + bar.get_width()/2., height + 0.01,
+                           f'{height:.3f}', ha='center', va='bottom', fontsize=9)
+        for bar in bars4:
+            height = bar.get_height()
+            axes[0, 1].text(bar.get_x() + bar.get_width()/2., height + 0.01,
+                           f'{height:.3f}', ha='center', va='bottom', fontsize=9)
+        
+        # Precision Comparison
         base_precision = [
             base_results['esg_indicator']['precision'],
             base_results['numerical_detection']['precision'],
@@ -519,18 +543,29 @@ class ModelComparator:
             finetuned_results['category_classification']['precision']
         ]
         
-        axes[1, 0].bar(x - width/2, base_precision, width, label='Base FinBERT', alpha=0.8, color='skyblue')
-        axes[1, 0].bar(x + width/2, finetuned_precision, width, label='Fine-tuned ESG', alpha=0.8, color='lightcoral')
-        axes[1, 0].set_xlabel('Tasks')
-        axes[1, 0].set_ylabel('Precision')
-        axes[1, 0].set_title('Precision Comparison')
+        bars5 = axes[1, 0].bar(x - width/2, base_precision, width, label='Base FinBERT', alpha=0.8, color='#4472C4')
+        bars6 = axes[1, 0].bar(x + width/2, finetuned_precision, width, label='Fine-tuned ESG', alpha=0.8, color='#E15759')
+        axes[1, 0].set_xlabel('Tasks', fontsize=11, fontweight='bold')
+        axes[1, 0].set_ylabel('Precision', fontsize=11, fontweight='bold')
+        axes[1, 0].set_title('Precision Comparison', fontsize=12, fontweight='bold', pad=15)
         axes[1, 0].set_xticks(x)
-        axes[1, 0].set_xticklabels(tasks, rotation=45, ha='right')
-        axes[1, 0].legend()
-        axes[1, 0].grid(True, alpha=0.3)
+        axes[1, 0].set_xticklabels(tasks, fontsize=10, ha='center')
+        axes[1, 0].legend(fontsize=10, loc='upper left')
+        axes[1, 0].grid(True, alpha=0.3, axis='y')
+        axes[1, 0].set_ylim(0, max(max(base_precision), max(finetuned_precision)) * 1.1)
+        
+        # Add value labels on bars
+        for bar in bars5:
+            height = bar.get_height()
+            axes[1, 0].text(bar.get_x() + bar.get_width()/2., height + 0.01,
+                           f'{height:.3f}', ha='center', va='bottom', fontsize=9)
+        for bar in bars6:
+            height = bar.get_height()
+            axes[1, 0].text(bar.get_x() + bar.get_width()/2., height + 0.01,
+                           f'{height:.3f}', ha='center', va='bottom', fontsize=9)
         
         # AUC Comparison (for binary tasks only)
-        binary_tasks = ['ESG Indicator', 'Numerical Detection']
+        binary_tasks = ['ESG\nIndicator', 'Numerical\nDetection']
         base_auc = [
             base_results['esg_indicator']['auc'],
             base_results['numerical_detection']['auc']
@@ -541,22 +576,33 @@ class ModelComparator:
         ]
         
         x_binary = np.arange(len(binary_tasks))
-        axes[1, 1].bar(x_binary - width/2, base_auc, width, label='Base FinBERT', alpha=0.8, color='skyblue')
-        axes[1, 1].bar(x_binary + width/2, finetuned_auc, width, label='Fine-tuned ESG', alpha=0.8, color='lightcoral')
-        axes[1, 1].set_xlabel('Tasks')
-        axes[1, 1].set_ylabel('AUC Score')
-        axes[1, 1].set_title('AUC Score Comparison')
+        bars7 = axes[1, 1].bar(x_binary - width/2, base_auc, width, label='Base FinBERT', alpha=0.8, color='#4472C4')
+        bars8 = axes[1, 1].bar(x_binary + width/2, finetuned_auc, width, label='Fine-tuned ESG', alpha=0.8, color='#E15759')
+        axes[1, 1].set_xlabel('Tasks', fontsize=11, fontweight='bold')
+        axes[1, 1].set_ylabel('AUC Score', fontsize=11, fontweight='bold')
+        axes[1, 1].set_title('AUC Score Comparison', fontsize=12, fontweight='bold', pad=15)
         axes[1, 1].set_xticks(x_binary)
-        axes[1, 1].set_xticklabels(binary_tasks)
-        axes[1, 1].legend()
-        axes[1, 1].grid(True, alpha=0.3)
+        axes[1, 1].set_xticklabels(binary_tasks, fontsize=10, ha='center')
+        axes[1, 1].legend(fontsize=10, loc='upper left')
+        axes[1, 1].grid(True, alpha=0.3, axis='y')
+        axes[1, 1].set_ylim(0, max(max(base_auc), max(finetuned_auc)) * 1.1)
+        
+        # Add value labels on bars
+        for bar in bars7:
+            height = bar.get_height()
+            axes[1, 1].text(bar.get_x() + bar.get_width()/2., height + 0.01,
+                           f'{height:.3f}', ha='center', va='bottom', fontsize=9)
+        for bar in bars8:
+            height = bar.get_height()
+            axes[1, 1].text(bar.get_x() + bar.get_width()/2., height + 0.01,
+                           f'{height:.3f}', ha='center', va='bottom', fontsize=9)
         
         plt.tight_layout()
         plt.savefig(f'{self.results_dir}/performance_comparison.png', dpi=300, bbox_inches='tight')
         plt.close()
         
         # 2. Improvement Analysis
-        fig, ax = plt.subplots(1, 1, figsize=(12, 8))
+        fig, ax = plt.subplots(1, 1, figsize=(14, 8))
         
         improvements = {
             'ESG Indicator F1': finetuned_f1[0] - base_f1[0],
@@ -567,20 +613,41 @@ class ModelComparator:
             'Category Classification Accuracy': finetuned_acc[2] - base_acc[2]
         }
         
-        metrics = list(improvements.keys())
+        # Shorten metric names for better display
+        metric_labels = [
+            'ESG Indicator F1',
+            'Numerical Detection F1', 
+            'Category Classification F1',
+            'ESG Indicator Accuracy',
+            'Numerical Detection Accuracy',
+            'Category Classification Accuracy'
+        ]
+        
         values = list(improvements.values())
-        colors = ['green' if v > 0 else 'red' for v in values]
+        colors = ['#2E8B57' if v > 0 else '#DC143C' for v in values]  # Sea green for positive, crimson for negative
         
-        bars = ax.barh(metrics, values, color=colors, alpha=0.7)
-        ax.set_xlabel('Improvement (Fine-tuned - Base)')
-        ax.set_title('Performance Improvement Analysis\n(Positive = Better, Negative = Worse)', fontweight='bold')
-        ax.axvline(x=0, color='black', linestyle='-', alpha=0.3)
-        ax.grid(True, alpha=0.3)
+        bars = ax.barh(metric_labels, values, color=colors, alpha=0.8, height=0.6)
+        ax.set_xlabel('Improvement (Fine-tuned - Base)', fontsize=12, fontweight='bold')
+        ax.set_title('Performance Improvement Analysis\n(Positive = Better, Negative = Worse)', 
+                    fontsize=14, fontweight='bold', pad=20)
+        ax.axvline(x=0, color='black', linestyle='-', alpha=0.5, linewidth=1.5)
+        ax.grid(True, alpha=0.3, axis='x')
         
-        # Add value labels on bars
+        # Improve y-axis labels
+        ax.set_yticklabels(metric_labels, fontsize=11)
+        ax.tick_params(axis='x', labelsize=10)
+        
+        # Add value labels on bars with better positioning
         for bar, value in zip(bars, values):
-            ax.text(value + (0.001 if value >= 0 else -0.001), bar.get_y() + bar.get_height()/2, 
-                   f'{value:.4f}', ha='left' if value >= 0 else 'right', va='center', fontweight='bold')
+            label_x = value + (0.005 if value >= 0 else -0.005)
+            ax.text(label_x, bar.get_y() + bar.get_height()/2, 
+                   f'{value:.4f}', ha='left' if value >= 0 else 'right', 
+                   va='center', fontweight='bold', fontsize=10,
+                   bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.8))
+        
+        # Set x-axis limits for better visualization
+        max_abs_value = max(abs(min(values)), abs(max(values)))
+        ax.set_xlim(-max_abs_value * 1.3, max_abs_value * 1.3)
         
         plt.tight_layout()
         plt.savefig(f'{self.results_dir}/improvement_analysis.png', dpi=300, bbox_inches='tight')

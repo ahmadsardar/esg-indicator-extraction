@@ -10,9 +10,6 @@ Sources:
 - Task Force on Climate-related Financial Disclosures (TCFD)
 - EU Taxonomy for Sustainable Activities
 - UN Sustainable Development Goals (SDGs)
-
-Author: Thesis Project
-Date: 2024
 """
 
 import json
@@ -65,7 +62,7 @@ class ESGIndicatorExpansion:
     def add_environmental_indicators(self):
         """Add comprehensive environmental indicators from GRI, SASB, TCFD"""
         
-        # Climate Change & GHG Emissions (GRI 305, SASB, TCFD)
+        #Climate Change & GHG Emissions (GRI 305, SASB, TCFD)
         self.add_indicator(
             "GHGEmissionsScope1", "Environmental", "Climate Change",
             "Direct greenhouse gas emissions from owned or controlled sources",
@@ -90,7 +87,7 @@ class ESGIndicatorExpansion:
             "SASB", "quantitative", "tCO2e/revenue"
         )
         
-        # Energy Management (GRI 302)
+        #Energy Management (GRI 302)
         self.add_indicator(
             "EnergyConsumption", "Environmental", "Energy Management",
             "Total energy consumption within the organization",
@@ -109,7 +106,7 @@ class ESGIndicatorExpansion:
             "GRI", "quantitative", "GJ/revenue"
         )
         
-        # Water Management (GRI 303)
+        #Water Management (GRI 303)
         self.add_indicator(
             "WaterConsumption", "Environmental", "Water Management",
             "Total water consumption by the organization",
@@ -128,7 +125,7 @@ class ESGIndicatorExpansion:
             "SASB", "quantitative", "m³"
         )
         
-        # Waste Management (GRI 306)
+        #Waste Management (GRI 306)
         self.add_indicator(
             "WasteGenerated", "Environmental", "Waste Management",
             "Total weight of waste generated",
@@ -147,7 +144,7 @@ class ESGIndicatorExpansion:
             "GRI", "quantitative", "tons"
         )
         
-        # Biodiversity (GRI 304)
+        #Biodiversity (GRI 304)
         self.add_indicator(
             "BiodiversityImpact", "Environmental", "Biodiversity",
             "Significant impacts on biodiversity in protected areas",
@@ -160,7 +157,7 @@ class ESGIndicatorExpansion:
             "SASB", "quantitative", "hectares"
         )
         
-        # Air Quality (SASB)
+        #Air Quality (SASB)
         self.add_indicator(
             "AirEmissions", "Environmental", "Air Quality",
             "Air emissions of pollutants (NOx, SOx, particulates)",
@@ -170,7 +167,7 @@ class ESGIndicatorExpansion:
     def add_social_indicators(self):
         """Add comprehensive social indicators from GRI and SASB"""
         
-        # Employment (GRI 401)
+        #Employment (GRI 401)
         self.add_indicator(
             "EmployeeTurnover", "Social", "Employment",
             "Total number and rates of new employee hires and employee turnover",
@@ -183,7 +180,7 @@ class ESGIndicatorExpansion:
             "GRI", "qualitative", "description"
         )
         
-        # Diversity & Inclusion (GRI 405)
+        #Diversity & Inclusion (GRI 405)
         self.add_indicator(
             "BoardDiversity", "Social", "Diversity & Inclusion",
             "Diversity of governance bodies and employees by gender, age, minority groups",
@@ -202,7 +199,7 @@ class ESGIndicatorExpansion:
             "SASB", "quantitative", "%"
         )
         
-        # Health & Safety (GRI 403)
+        #Health & Safety (GRI 403)
         self.add_indicator(
             "WorkplaceInjuries", "Social", "Health & Safety",
             "Work-related injuries and injury rates",
@@ -221,7 +218,7 @@ class ESGIndicatorExpansion:
             "GRI", "quantitative", "%"
         )
         
-        # Training & Development (GRI 404)
+        #Training & Development (GRI 404)
         self.add_indicator(
             "EmployeeTraining", "Social", "Training & Development",
             "Average hours of training per year per employee",
@@ -234,7 +231,7 @@ class ESGIndicatorExpansion:
             "GRI", "qualitative", "description"
         )
         
-        # Human Rights (GRI 412)
+        #Human Rights (GRI 412)
         self.add_indicator(
             "HumanRightsAssessment", "Social", "Human Rights",
             "Operations subject to human rights reviews or impact assessments",
@@ -247,7 +244,7 @@ class ESGIndicatorExpansion:
             "GRI", "qualitative", "description"
         )
         
-        # Community Relations (GRI 413)
+        #Community Relations (GRI 413)
         self.add_indicator(
             "CommunityEngagement", "Social", "Community Relations",
             "Operations with local community engagement and development programs",
@@ -260,7 +257,7 @@ class ESGIndicatorExpansion:
             "GRI", "quantitative", "%"
         )
         
-        # Customer Privacy & Data Security (SASB)
+        #Customer Privacy & Data Security (SASB)
         self.add_indicator(
             "DataSecurity", "Social", "Data Privacy",
             "Description of approach to identifying and addressing data security risks",
@@ -276,7 +273,7 @@ class ESGIndicatorExpansion:
     def add_governance_indicators(self):
         """Add comprehensive governance indicators from GRI and SASB"""
         
-        # Corporate Governance (GRI 102)
+        #Corporate Governance (GRI 102)
         self.add_indicator(
             "BoardIndependence", "Governance", "Board Composition",
             "Percentage of independent board members",
@@ -295,7 +292,7 @@ class ESGIndicatorExpansion:
             "GRI", "quantitative", "ratio"
         )
         
-        # Ethics & Compliance (GRI 205, 206)
+        #Ethics & Compliance (GRI 205, 206)
         self.add_indicator(
             "AntiCorruption", "Governance", "Ethics & Compliance",
             "Operations assessed for risks related to corruption",
@@ -314,7 +311,7 @@ class ESGIndicatorExpansion:
             "GRI", "quantitative", "number"
         )
         
-        # Risk Management (TCFD)
+        #Risk Management (TCFD)
         self.add_indicator(
             "ClimateRiskGovernance", "Governance", "Risk Management",
             "Board oversight of climate-related risks and opportunities",
@@ -327,7 +324,7 @@ class ESGIndicatorExpansion:
             "TCFD", "qualitative", "description"
         )
         
-        # Supply Chain Management
+        #Supply Chain Management
         self.add_indicator(
             "SupplierAssessment", "Governance", "Supply Chain",
             "New suppliers screened using environmental and social criteria",
@@ -340,7 +337,7 @@ class ESGIndicatorExpansion:
             "GRI", "quantitative", "number"
         )
         
-        # Transparency & Reporting
+        #Transparency & Reporting
         self.add_indicator(
             "ESGReporting", "Governance", "Transparency",
             "Publication of sustainability reports and ESG disclosures",
@@ -357,17 +354,17 @@ class ESGIndicatorExpansion:
         """Generate the complete expanded ESG indicator set"""
         print("Generating comprehensive ESG indicator set...")
         
-        # Load original indicators
+        #Loading original indicators
         self.load_original_indicators()
         
-        # Add indicators from major frameworks
+        #Adding indicators from major frameworks
         self.add_environmental_indicators()
         self.add_social_indicators() 
         self.add_governance_indicators()
         
         print(f"Generated {len(self.indicators)} ESG indicators")
         
-        # Summary by category
+        #Summarizing by category
         categories = {}
         for indicator in self.indicators:
             cat = indicator['category']
@@ -428,7 +425,7 @@ This document provides annotation guidelines for extracting {len(self.indicators
             
         guidelines += "\n## Indicator Categories\n\n"
         
-        # Group by category
+        #Grouping by category
         by_category = {}
         for indicator in self.indicators:
             cat = indicator['category']
@@ -439,7 +436,7 @@ This document provides annotation guidelines for extracting {len(self.indicators
         for category, indicators in by_category.items():
             guidelines += f"### {category} ({len(indicators)} indicators)\n\n"
             
-            # Group by subcategory
+            #Grouping by subcategory
             by_subcat = {}
             for ind in indicators:
                 subcat = ind['subcategory']
@@ -488,10 +485,10 @@ def main():
     """Main execution function"""
     expander = ESGIndicatorExpansion()
     
-    # Generate comprehensive indicator set
+    #Generating comprehensive indicator set
     indicators = expander.generate_comprehensive_set()
     
-    # Save outputs
+    #Saving outputs
     expander.save_to_json("data/expanded_esg_indicators.json")
     expander.save_to_csv("data/expanded_esg_indicators.csv")
     expander.create_annotation_guidelines("docs/esg_annotation_guidelines.md")

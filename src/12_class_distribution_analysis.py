@@ -36,7 +36,7 @@ class ESGClassDistributionAnalyzer:
         """Load train, validation, and test datasets."""
         print("Loading datasets...")
         
-        # Load datasets
+
         self.train_data = pd.read_csv(self.data_path / "esg_train_set.csv")
         self.val_data = pd.read_csv(self.data_path / "esg_validation_set.csv")
         self.test_data = pd.read_csv(self.data_path / "esg_test_set.csv")
@@ -45,7 +45,7 @@ class ESGClassDistributionAnalyzer:
         print(f"Validation set: {len(self.val_data)} samples")
         print(f"Test set: {len(self.test_data)} samples")
         
-        # Extract all unique indicators from the indicator_matches column
+
         self.all_indicators = self._extract_all_indicators()
         
         print(f"Found {len(self.all_indicators)} unique ESG indicators")
@@ -58,13 +58,13 @@ class ESGClassDistributionAnalyzer:
         """Extract all unique indicator IDs from the indicator_matches column."""
         all_indicators = set()
         
-        # Combine all datasets
+
         all_data = pd.concat([self.train_data, self.val_data, self.test_data], ignore_index=True)
         
         for _, row in all_data.iterrows():
             if pd.notna(row['indicator_matches']):
                 try:
-                    # Parse the JSON string
+
                     matches = json.loads(row['indicator_matches'])
                     if isinstance(matches, list):
                         for match in matches:

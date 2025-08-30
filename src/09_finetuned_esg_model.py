@@ -68,15 +68,15 @@ class LightweightESGModel(nn.Module):
                  enable_context_awareness=True):
         super(LightweightESGModel, self).__init__()
         
-        # Load FinBERT with minimal configuration
+
         self.config = AutoConfig.from_pretrained(model_name)
         self.bert = AutoModel.from_pretrained(model_name)
         
-        # Freeze early layers to reduce memory
+
         for param in self.bert.embeddings.parameters():
             param.requires_grad = False
         
-        # Freeze first 6 encoder layers (keep last 6 trainable)
+
         for i in range(6):
             for param in self.bert.encoder.layer[i].parameters():
                 param.requires_grad = False
@@ -86,7 +86,7 @@ class LightweightESGModel(nn.Module):
         self.dropout = nn.Dropout(dropout_rate)
         self.enable_context_awareness = enable_context_awareness
         
-        # Initialize context-aware module
+
         if self.enable_context_awareness:
             self.context_module = create_context_aware_enhancement(
                 hidden_size=self.hidden_size,
@@ -94,8 +94,8 @@ class LightweightESGModel(nn.Module):
                 dropout_rate=dropout_rate
             )
         
-        # Enhanced task heads with residual connections
-        # 1. ESG Indicator Classification (primary task)
+
+
         self.indicator_proj = nn.Linear(self.hidden_size, 256)
         self.indicator_bn1 = nn.BatchNorm1d(256)
         self.indicator_hidden = nn.Linear(256, 128)
@@ -103,7 +103,7 @@ class LightweightESGModel(nn.Module):
         self.indicator_output = nn.Linear(128, num_indicators)
         self.indicator_residual = nn.Linear(self.hidden_size, 128)  # Residual connection
         
-        # 2. Numerical Detection (secondary task)
+
         self.numerical_proj = nn.Linear(self.hidden_size, 128)
         self.numerical_bn1 = nn.BatchNorm1d(128)
         self.numerical_hidden = nn.Linear(128, 64)
@@ -111,7 +111,7 @@ class LightweightESGModel(nn.Module):
         self.numerical_output = nn.Linear(64, 1)
         self.numerical_residual = nn.Linear(self.hidden_size, 64)  # Residual connection
         
-        # 3. ESG Category Classification (tertiary task)
+
         self.category_proj = nn.Linear(self.hidden_size, 64)
         self.category_bn1 = nn.BatchNorm1d(64)
         self.category_hidden = nn.Linear(64, 32)
@@ -123,7 +123,7 @@ class LightweightESGModel(nn.Module):
         """
         Forward pass with context-aware enhancement and memory optimization
         """
-        # Get BERT embeddings with autocast for mixed precision
+
         outputs = self.bert(
             input_ids=input_ids,
             attention_mask=attention_mask,
@@ -131,28 +131,28 @@ class LightweightESGModel(nn.Module):
             output_attentions=False
         )
         
-        # Use pooled output as base
+
         pooled_output = outputs.pooler_output
         
-        # Apply context-aware enhancement if enabled
+
         if self.enable_context_awareness and hasattr(self, 'context_module'):
             hidden_states = outputs.last_hidden_state
             context_output = self.context_module(hidden_states, attention_mask)
             
-            # Use enhanced features as the main representation
+
             enhanced_features = context_output['enhanced_features']
             
-            # Combine with original pooled output for robustness
+
             pooled_output = 0.7 * enhanced_features + 0.3 * pooled_output
             
-            # Store context information for potential analysis
+
             self.last_context_scores = context_output.get('context_scores', None)
             self.last_esg_relevance = context_output.get('esg_relevance', None)
         
         pooled_output = self.dropout(pooled_output)
         
-        # Task-specific predictions with residual connections
-        # Indicator classification
+
+
         x1 = F.relu(self.indicator_bn1(self.indicator_proj(pooled_output)))
         x1 = F.dropout(x1, p=self.dropout.p, training=self.training)
         x1 = F.relu(self.indicator_bn2(self.indicator_hidden(x1)))
@@ -161,7 +161,7 @@ class LightweightESGModel(nn.Module):
         x1 = x1 + residual1  # Residual connection
         indicator_logits = self.indicator_output(x1)
         
-        # Numerical detection
+
         x2 = F.relu(self.numerical_bn1(self.numerical_proj(pooled_output)))
         x2 = F.dropout(x2, p=self.dropout.p, training=self.training)
         x2 = F.relu(self.numerical_bn2(self.numerical_hidden(x2)))
@@ -170,7 +170,7 @@ class LightweightESGModel(nn.Module):
         x2 = x2 + residual2  # Residual connection
         numerical_logits = self.numerical_output(x2)
         
-        # Category classification
+
         x3 = F.relu(self.category_bn1(self.category_proj(pooled_output)))
         x3 = F.dropout(x3, p=self.dropout.p, training=self.training)
         x3 = F.relu(self.category_bn2(self.category_hidden(x3)))

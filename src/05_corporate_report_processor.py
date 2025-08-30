@@ -51,12 +51,12 @@ class CorporateReportProcessor:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
-        # Initialize components
+        #Initializing components
         self.indicators = []
         self.indicator_keywords = {}
         self.vectorizer = TfidfVectorizer(max_features=1000, stop_words='english')
         
-        # Download required NLTK data
+        #Downloading required NLTK data
         try:
             nltk.data.find('tokenizers/punkt')
         except LookupError:
@@ -79,7 +79,7 @@ class CorporateReportProcessor:
         self.indicators = data.get('indicators', [])
         logger.info(f"Loaded {len(self.indicators)} ESG indicators")
         
-        # Create keyword mappings for each indicator
+        #Creating keyword mappings for each indicator
         self._create_indicator_keywords()
     
     def _create_indicator_keywords(self) -> None:
@@ -95,24 +95,24 @@ class CorporateReportProcessor:
             category = indicator.get('category', '').lower()
             subcategory = indicator.get('subcategory', '').lower()
             
-            # Extract keywords from name and description
+            #Extracting keywords from name and description
             keywords = set()
             
-            # Add words from name (remove common words)
+            #Adding words from name (removing common words)
             name_words = re.findall(r'\b\w{3,}\b', name)
             keywords.update(name_words)
             
-            # Add key terms from description
+            #Adding key terms from description
             desc_words = re.findall(r'\b\w{4,}\b', description)
             keywords.update(desc_words[:10])  # Limit to top 10 words
             
-            # Add category terms
+            #Adding category terms
             if category:
                 keywords.add(category)
             if subcategory:
                 keywords.add(subcategory)
             
-            # Remove common stopwords
+            #Removing common stopwords
             stop_words = set(stopwords.words('english'))
             keywords = keywords - stop_words
             
@@ -149,7 +149,7 @@ class CorporateReportProcessor:
         except Exception as e:
             logger.warning(f"Failed to extract text from {pdf_path} using PyMuPDF: {e}")
             
-            # Fallback to PyPDF2
+            #Fallback to PyPDF2
             try:
                 with open(pdf_path, 'rb') as file:
                     pdf_reader = PyPDF2.PdfReader(file)
@@ -176,29 +176,29 @@ class CorporateReportProcessor:
         Returns:
             List of text segments
         """
-        # Clean text
+        #Cleaning text
         text = re.sub(r'\s+', ' ', text)  # Normalize whitespace
         text = re.sub(r'[^\w\s.,;:!?()-]', '', text)  # Remove special characters
         
-        # Split into sentences
+        #Splitting into sentences
         sentences = sent_tokenize(text)
         
         segments = []
         current_segment = ""
         
         for sentence in sentences:
-            # Skip very short sentences
+            #Skipping very short sentences
             if len(sentence.strip()) < 20:
                 continue
             
-            # If adding this sentence would exceed max_length, save current segment
+            #If adding this sentence would exceed max_length, saving current segment
             if len(current_segment) + len(sentence) > max_length and len(current_segment) >= min_length:
                 segments.append(current_segment.strip())
                 current_segment = sentence
             else:
                 current_segment += " " + sentence if current_segment else sentence
         
-        # Add the last segment if it meets minimum length
+        #Adding the last segment if it meets minimum length
         if len(current_segment.strip()) >= min_length:
             segments.append(current_segment.strip())
         
@@ -220,16 +220,16 @@ class CorporateReportProcessor:
             segment_lower = segment.lower()
             matches = []
             
-            # Check each indicator for keyword matches
+            #Checking each indicator for keyword matches
             for indicator in self.indicators:
                 indicator_id = indicator.get('indicator_id', '')
                 keywords = self.indicator_keywords.get(indicator_id, {}).get('keywords', [])
                 
-                # Count keyword matches
+                #Counting keyword matches
                 keyword_matches = sum(1 for keyword in keywords if keyword in segment_lower)
                 
                 if keyword_matches > 0:
-                    # Calculate match score
+                    #Calculating match score
                     match_score = keyword_matches / max(len(keywords), 1)
                     
                     matches.append({
@@ -243,7 +243,7 @@ class CorporateReportProcessor:
                         'matched_keywords': [kw for kw in keywords if kw in segment_lower]
                     })
             
-            # Sort matches by score and keep top matches
+            #Sorting matches by score and keeping top matches
             matches.sort(key=lambda x: x['match_score'], reverse=True)
             top_matches = matches[:3]  # Keep top 3 matches
             
@@ -270,17 +270,17 @@ class CorporateReportProcessor:
         """
         logger.info(f"Processing report: {pdf_path.name}")
         
-        # Extract text
+        #Extracting text
         text = self.extract_text_from_pdf(pdf_path)
         if not text:
             logger.warning(f"No text extracted from {pdf_path.name}")
             return {'error': 'No text extracted'}
         
-        # Segment text
+        #Segmenting text
         segments = self.segment_text(text)
         logger.info(f"Created {len(segments)} text segments")
         
-        # Match segments to indicators
+        #Matching segments to indicators
         matched_data = self.match_segments_to_indicators(segments)
         logger.info(f"Found {len(matched_data)} segments with indicator matches")
         
@@ -304,7 +304,7 @@ class CorporateReportProcessor:
         all_results = []
         all_matched_data = []
         
-        # Find all PDF files
+        #Finding all PDF files
         pdf_files = list(self.reports_dir.rglob('*.pdf'))
         logger.info(f"Found {len(pdf_files)} PDF files")
         
@@ -336,7 +336,7 @@ class CorporateReportProcessor:
         
         training_data = []
         
-        # Process each report's data separately to track source
+        #Processing each report's data separately to track source
         for report_result in processing_results['reports']:
             report_name = report_result['report_name']
             
@@ -374,32 +374,32 @@ class CorporateReportProcessor:
         """
         logger.info(f"Saving datasets to {self.output_dir}")
         
-        # Create individual reports directory
+        #Creating individual reports directory
         individual_dir = self.output_dir / 'individual_reports'
         individual_dir.mkdir(parents=True, exist_ok=True)
         
-        # Save combined training dataset
+        #Saving combined training dataset
         training_csv = self.output_dir / 'esg_training_dataset.csv'
         training_df.to_csv(training_csv, index=False, encoding='utf-8')
         logger.info(f"Saved combined training dataset: {training_csv}")
         
-        # Save individual datasets for each PDF
+        #Saving individual datasets for each PDF
         logger.info("Creating individual datasets for each PDF...")
         individual_stats = {}
         
         for report_name in training_df['report_name'].unique():
-            # Filter data for this specific report
+            #Filtering data for this specific report
             report_data = training_df[training_df['report_name'] == report_name].copy()
             
-            # Clean report name for filename (remove .pdf extension and invalid characters)
+            #Cleaning report name for filename (removing .pdf extension and invalid characters)
             clean_name = report_name.replace('.pdf', '').replace(' ', '_').replace('-', '_')
             clean_name = ''.join(c for c in clean_name if c.isalnum() or c == '_')
             
-            # Save individual CSV
+            #Saving individual CSV
             individual_csv_path = individual_dir / f'{clean_name}_esg_dataset.csv'
             report_data.to_csv(individual_csv_path, index=False, encoding='utf-8')
             
-            # Calculate individual statistics
+            #Calculating individual statistics
             individual_stats[report_name] = {
                 'samples': len(report_data),
                 'unique_indicators': report_data['indicator_id'].nunique(),
@@ -412,19 +412,19 @@ class CorporateReportProcessor:
             
             logger.info(f"Saved {report_name}: {len(report_data)} samples → {individual_csv_path.name}")
         
-        # Save individual statistics
+        #Saving individual statistics
         individual_stats_path = individual_dir / 'individual_report_statistics.json'
         with open(individual_stats_path, 'w', encoding='utf-8') as f:
             json.dump(individual_stats, f, indent=2, ensure_ascii=False)
         logger.info(f"Saved individual statistics: {individual_stats_path}")
         
-        # Save processing results as JSON
+        #Saving processing results as JSON
         results_json = self.output_dir / 'report_processing_results.json'
         with open(results_json, 'w', encoding='utf-8') as f:
             json.dump(processing_results, f, indent=2, ensure_ascii=False)
         logger.info(f"Saved processing results: {results_json}")
         
-        # Create summary statistics
+        #Creating summary statistics
         summary_stats = {
             'total_reports_processed': processing_results['total_reports_processed'],
             'total_matched_segments': processing_results['total_matched_segments'],
@@ -442,7 +442,7 @@ class CorporateReportProcessor:
             json.dump(summary_stats, f, indent=2, ensure_ascii=False)
         logger.info(f"Saved summary statistics: {summary_json}")
         
-        # Save category-wise breakdown
+        #Saving category-wise breakdown
         category_breakdown = training_df.groupby(['category', 'framework']).agg({
             'indicator_id': 'count',
             'match_score': 'mean',
@@ -459,12 +459,12 @@ def main():
     """
     print("=== Corporate Report Processing for ESG Dataset Creation ===")
     
-    # Configuration
+    #Configuration
     indicators_path = 'data/indicators/comprehensive_esg_indicators.json'
     reports_dir = '../Datasets'  # Corporate reports directory
     output_dir = 'data/processed/corporate_reports'
     
-    # Initialize processor
+    #Initializing processor
     processor = CorporateReportProcessor(
         indicators_path=indicators_path,
         reports_dir=reports_dir,
@@ -472,30 +472,30 @@ def main():
     )
     
     try:
-        # Step 1: Load ESG indicators
+        #Step 1: Loading ESG indicators
         print("\nStep 1: Loading comprehensive ESG indicators...")
         processor.load_indicators()
         print(f"✓ Loaded {len(processor.indicators)} ESG indicators")
         
-        # Step 2: Process all corporate reports
+        #Step 2: Processing all corporate reports
         print("\nStep 2: Processing corporate PDF reports...")
         processing_results = processor.process_all_reports()
         print(f"✓ Processed {processing_results['total_reports_processed']} reports")
         print(f"✓ Found {processing_results['total_matched_segments']} text segments with ESG matches")
         
-        # Step 3: Create training dataset
+        #Step 3: Creating training dataset
         print("\nStep 3: Creating structured training dataset...")
         training_df = processor.create_training_dataset(processing_results)
         print(f"✓ Created training dataset with {len(training_df)} samples")
         print(f"✓ Covers {training_df['indicator_id'].nunique()} unique ESG indicators")
         
-        # Step 4: Save all datasets
+        #Step 4: Saving all datasets
         print("\nStep 4: Saving datasets and results...")
         processor.save_datasets(processing_results, training_df)
         print(f"✓ Saved combined dataset to: {processor.output_dir}")
         print(f"✓ Saved {training_df['report_name'].nunique()} individual datasets to: {processor.output_dir / 'individual_reports'}")
         
-        # Display summary
+        #Displaying summary
         print("\n=== PROCESSING SUMMARY ===")
         print(f"Reports processed: {processing_results['total_reports_processed']}")
         print(f"Training samples created: {len(training_df)}")

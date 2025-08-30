@@ -30,10 +30,10 @@ class ESGContextAwareModule(nn.Module):
         self.hidden_size = hidden_size
         self.context_dim = context_dim
         
-        # ESG domain knowledge embeddings (learned, not hardcoded)
+        #ESG domain knowledge embeddings (learned, not hardcoded)
         self.esg_category_embeddings = nn.Embedding(3, context_dim)  # E, S, G
         
-        # Context attention mechanism
+        #Context attention mechanism
         self.context_attention = nn.MultiheadAttention(
             embed_dim=hidden_size,
             num_heads=8,
@@ -41,21 +41,21 @@ class ESGContextAwareModule(nn.Module):
             batch_first=True
         )
         
-        # Context fusion layers
+        #Context fusion layers
         self.context_proj = nn.Linear(hidden_size, context_dim)
         self.context_norm = nn.LayerNorm(context_dim)
         self.context_dropout = nn.Dropout(dropout_rate)
         
-        # Enhanced feature fusion
+        #Enhanced feature fusion
         self.fusion_gate = nn.Linear(hidden_size + context_dim, hidden_size)
         self.fusion_norm = nn.LayerNorm(hidden_size)
         
-        # Initialize embeddings with ESG-aware values
+        #Initializing embeddings with ESG-aware values
         self._initialize_esg_embeddings()
     
     def _initialize_esg_embeddings(self):
         """Initialize ESG category embeddings with domain knowledge"""
-        # Initialize with small random values to avoid bias
+        #Initializing with small random values to avoid bias
         nn.init.normal_(self.esg_category_embeddings.weight, mean=0.0, std=0.02)
     
     def compute_esg_context_scores(self, hidden_states: torch.Tensor, 
@@ -63,17 +63,17 @@ class ESGContextAwareModule(nn.Module):
         """Compute ESG context relevance scores without bias"""
         batch_size, seq_len, hidden_dim = hidden_states.shape
         
-        # Apply attention mask
+        #Applying attention mask
         masked_hidden = hidden_states * attention_mask.unsqueeze(-1)
         
-        # Compute attention weights for ESG relevance
+        #Computing attention weights for ESG relevance
         context_query = self.context_proj(masked_hidden.mean(dim=1))  # [batch, context_dim]
         context_query = self.context_norm(context_query)
         
-        # Get ESG category embeddings
+        #Getting ESG category embeddings
         esg_embeddings = self.esg_category_embeddings.weight  # [3, context_dim]
         
-        # Compute similarity scores (no hardcoded bias)
+        #Computing similarity scores (no hardcoded bias)
         context_scores = torch.matmul(context_query, esg_embeddings.T)  # [batch, 3]
         context_scores = F.softmax(context_scores, dim=-1)
         
@@ -84,27 +84,27 @@ class ESGContextAwareModule(nn.Module):
         """Enhance features with ESG context awareness"""
         batch_size, seq_len, hidden_dim = hidden_states.shape
         
-        # Self-attention for context modeling
+        #Self-attention for context modeling
         attended_features, _ = self.context_attention(
             hidden_states, hidden_states, hidden_states,
             key_padding_mask=~attention_mask.bool()
         )
         
-        # Pool attended features
+        #Pooling attended features
         pooled_attended = (attended_features * attention_mask.unsqueeze(-1)).sum(dim=1) / attention_mask.sum(dim=1, keepdim=True)
         
-        # Compute context scores
+        #Computing context scores
         context_scores = self.compute_esg_context_scores(hidden_states, attention_mask)
         
-        # Project context scores to feature space
+        #Projecting context scores to feature space
         context_features = torch.matmul(context_scores, self.esg_category_embeddings.weight)
         context_features = self.context_dropout(context_features)
         
-        # Fusion gate for combining original and context features
+        #Fusion gate for combining original and context features
         combined_features = torch.cat([pooled_attended, context_features], dim=-1)
         gate_weights = torch.sigmoid(self.fusion_gate(combined_features))
         
-        # Enhanced features with gated fusion
+        #Enhanced features with gated fusion
         enhanced_features = gate_weights * pooled_attended + (1 - gate_weights) * pooled_attended
         enhanced_features = self.fusion_norm(enhanced_features)
         
@@ -131,7 +131,7 @@ class ESGSemanticEnhancer:
     
     def _load_esg_domain_terms(self) -> Dict[str, List[str]]:
         """Load ESG domain terms for semantic enhancement (bias-free)"""
-        # Minimal, unbiased ESG domain terms
+        #Minimal, unbiased ESG domain terms
         return {
             "environmental": ["environmental", "climate", "energy", "emissions", "sustainability"],
             "social": ["social", "employee", "community", "diversity", "safety"],
@@ -154,9 +154,9 @@ class ESGSemanticEnhancer:
         relevance_scores = {}
         
         for domain, terms in self._esg_domain_terms.items():
-            # Simple term frequency approach (unbiased)
+            #Simple term frequency approach (unbiased)
             score = sum(1 for term in terms if term in text_lower)
-            # Normalize by text length to avoid length bias
+            #Normalizing by text length to avoid length bias
             relevance_scores[domain] = score / max(len(text.split()), 1)
         
         return relevance_scores
@@ -166,7 +166,7 @@ class ESGSemanticEnhancer:
         if not self.model:
             self.initialize_model()
         
-        # Tokenize and encode
+        #Tokenizing and encoding
         inputs = self.tokenizer(
             text, return_tensors="pt", truncation=True,
             padding=True, max_length=max_length
@@ -177,7 +177,7 @@ class ESGSemanticEnhancer:
             hidden_states = outputs.last_hidden_state
             pooled_output = outputs.pooler_output
         
-        # Compute semantic relevance
+        #Computing semantic relevance
         semantic_scores = self.compute_semantic_relevance(text)
         
         return {

@@ -31,38 +31,38 @@ class ESGDataPreprocessor:
         df = pd.read_csv(input_path)
         print(f"Loaded {len(df)} samples")
         
-        # Create ESG indicator label (binary: is_esg_relevant)
+
         df['esg_indicator_label'] = df['is_esg_relevant'].astype(int)
         
-        # Create numerical detection label (binary: has_numerical_data)
+
         df['numerical_label'] = df['has_numerical_data'].astype(int)
         
-        # Create category classification label (multiclass: primary_category)
-        # Map categories to integers
+
+
         df['category_label'] = df['primary_category'].map(self.category_mapping)
         
-        # Handle missing category labels (set to 0 for Environmental as default)
+
         df['category_label'] = df['category_label'].fillna(0).astype(int)
         
-        # Keep only necessary columns for evaluation
+
         eval_columns = [
             'text', 'esg_indicator_label', 'numerical_label', 'category_label',
             'is_esg_relevant', 'has_numerical_data', 'primary_category',
             'confidence_score', 'annotation_quality', 'training_weight'
         ]
         
-        # Add columns that exist in the dataset
+
         available_columns = [col for col in eval_columns if col in df.columns]
         processed_df = df[available_columns].copy()
         
-        # Save processed dataset
+
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         processed_df.to_csv(output_path, index=False)
         
         print(f"Processed dataset saved to: {output_path}")
         print(f"Dataset shape: {processed_df.shape}")
         
-        # Print label distribution
+
         self.print_label_distribution(processed_df)
         
         return processed_df
@@ -106,7 +106,7 @@ class ESGDataPreprocessor:
             print(f"Warning: Test set not found at {test_path}")
             test_df = None
         
-        # Process validation set
+
         if os.path.exists(val_path):
             val_df = self.process_dataset(
                 val_path,
@@ -116,7 +116,7 @@ class ESGDataPreprocessor:
             print(f"Warning: Validation set not found at {val_path}")
             val_df = None
         
-        # Process training set if provided
+
         train_df = None
         if train_path and os.path.exists(train_path):
             train_df = self.process_dataset(
@@ -134,7 +134,7 @@ class ESGDataPreprocessor:
         if missing_columns:
             raise ValueError(f"Missing required columns: {missing_columns}")
         
-        # Validate label ranges
+
         if not df['esg_indicator_label'].isin([0, 1]).all():
             raise ValueError("ESG indicator labels must be 0 or 1")
             
@@ -152,20 +152,20 @@ def main():
     print("ESG Data Preprocessor")
     print("=" * 30)
     
-    # Initialize preprocessor
+
     preprocessor = ESGDataPreprocessor()
     
-    # Define paths
+
     data_dir = 'data/annotations'
     test_path = f'{data_dir}/esg_test_set.csv'
     val_path = f'{data_dir}/esg_validation_set.csv'
     
-    # Create evaluation-ready datasets
+
     test_df, val_df, train_df = preprocessor.create_evaluation_splits(
         test_path, val_path
     )
     
-    # Validate processed data
+
     if test_df is not None:
         preprocessor.validate_processed_data(test_df)
         print(f"✓ Test set processed: {len(test_df)} samples")

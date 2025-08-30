@@ -14,13 +14,13 @@ class EnhancedESGOntologyAnalyzer:
         self.ontology_path = ontology_path
         self.graph = Graph()
         
-        # Define namespaces
+        #Defining namespaces
         self.ESG = Namespace("http://www.annasvijaya.com/ESGOnt/esgontology#")
         self.RDF = Namespace("http://www.w3.org/1999/02/22-rdf-syntax-ns#")
         self.RDFS = Namespace("http://www.w3.org/2000/01/rdf-schema#")
         self.OWL = Namespace("http://www.w3.org/2002/07/owl#")
         
-        # Bind namespaces
+        #Binding namespaces
         self.graph.bind("esg", self.ESG)
         self.graph.bind("rdf", self.RDF)
         self.graph.bind("rdfs", self.RDFS)
@@ -88,7 +88,6 @@ class EnhancedESGOntologyAnalyzer:
     
     def extract_esg_categories(self):
         """Extract ESG category classes that could represent measurable concepts"""
-        # Define ESG-related classes that could be indicators
         esg_classes = [
             'Energy', 'Waste', 'Water', 'GHG_Emissions', 'Biodiversity',
             'Health_and_Safety', 'Employee_Development', 'Employee_Turnover',
@@ -182,14 +181,14 @@ class EnhancedESGOntologyAnalyzer:
         if not self.load_ontology():
             return None
         
-        # Extract different types of indicators and concepts
+        #Extracting different types of indicators and concepts
         performance_indicators = self.extract_performance_indicators()
         maturity_indicators = self.extract_maturity_indicators()
         esg_categories = self.extract_esg_categories()
         relationships = self.extract_relationships()
         sdg_mappings = self.extract_sdg_mappings()
         
-        # Combine all potential indicators
+        #Combining all potential indicators
         all_indicators = performance_indicators + maturity_indicators + esg_categories
         
         analysis_result = {
@@ -226,7 +225,6 @@ class EnhancedESGOntologyAnalyzer:
             writer = csv.writer(f)
             writer.writerow(['Name', 'Label', 'Type', 'Comment', 'URI', 'Category'])
             
-            # Write all indicators
             for indicator_type in ['performance_indicators', 'maturity_indicators', 'esg_categories']:
                 for indicator in analysis_result.get(indicator_type, []):
                     writer.writerow([
@@ -260,22 +258,19 @@ class EnhancedESGOntologyAnalyzer:
             return 'Other'
 
 def main():
-    # Initialize analyzer
     ontology_path = "../esgontology.owl"
     analyzer = EnhancedESGOntologyAnalyzer(ontology_path)
     
-    # Perform analysis
+    #Performing analysis
     analysis_result = analyzer.analyze_ontology()
     
     if analysis_result:
-        # Save analysis results
         output_path = "data/indicators/esg_ontology_analysis.json"
         csv_path = "data/indicators/esg_ontology_indicators.csv"
         
         analyzer.save_analysis(analysis_result, output_path)
         analyzer.save_indicators_mapping(analysis_result, csv_path)
         
-        # Print summary
         print("\n=== Enhanced ESG Ontology Analysis Summary ===")
         print(f"Total Potential Indicators: {analysis_result['summary']['total_potential_indicators']}")
         print(f"Performance Indicators: {analysis_result['summary']['performance_indicators_count']}")
@@ -289,7 +284,7 @@ def main():
                          analysis_result['maturity_indicators'] + 
                          analysis_result['esg_categories'])
         
-        for indicator in all_indicators[:20]:  # Show first 20
+        for indicator in all_indicators[:20]:  #Showing first 20
             print(f"- {indicator['name']}: {indicator['label']} ({indicator['type']})")
         
         if len(all_indicators) > 20:

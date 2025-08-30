@@ -1,9 +1,7 @@
 {
-  "timestamp": "2025-08-21T00:39:16.774495",
   "dataset_overview": {
     "total_samples": 15312,
-    "annotation_file": "enhanced_esg_annotations_latest.csv",
-    "validation_date": "2025-08-21 00:39:16"
+    "annotation_file": "enhanced_esg_annotations.csv"
   },
   "quality_analysis": {
     "overview": {

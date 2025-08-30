@@ -29,17 +29,17 @@ def main():
     print("=== COMBINING ESG INDICATORS ===")
     print("Loading data files...")
     
-    # Load ontology indicators
+    #Loading ontology indicators
     with open(data_dir / 'esg_ontology_analysis.json', 'r', encoding='utf-8') as f:
         ontology_data = json.load(f)
     
-    # Load expanded indicators
+    #Loading expanded indicators
     expanded_df = pd.read_csv(data_dir / 'expanded_esg_indicators.csv')
     
     # Load newly discovered indicators
     newly_discovered_df = pd.read_csv(data_dir / 'manually_discovered_indicators.csv')
     
-    # Combine performance indicators and ESG categories from ontology
+    #Combining performance indicators and ESG categories from ontology
     all_ontology_indicators = ontology_data.get('performance_indicators', []) + ontology_data.get('esg_categories', [])
     
     print(f"Ontology indicators loaded: {len(all_ontology_indicators)}")
@@ -49,10 +49,10 @@ def main():
     
     print("\nConverting ontology data to DataFrame...")
     
-    # Convert ontology indicators to DataFrame format
+    #Converting ontology indicators to DataFrame format
     ontology_indicators = []
     
-    # Create category mapping for better organization
+    #Creating category mapping for better organization
     category_mapping = {
         'Energy': 'Environmental',
         'Water': 'Environmental', 
@@ -109,16 +109,16 @@ def main():
     for i, indicator in enumerate(all_ontology_indicators, 1):
         indicator_name = indicator.get('name', '')
         
-        # Generate proper ID
+        #Generating proper ID
         indicator_id = f"ONT_{i:03d}"
         
-        # Determine category based on indicator name
+        #Determining category based on indicator name
         category = category_mapping.get(indicator_name, 'Environmental')  # Default to Environmental
         
-        # Determine subcategory (use the indicator name as subcategory)
+        #Determining subcategory (using the indicator name as subcategory)
         subcategory = indicator_name
         
-        # Create description from comment or generate one
+        #Creating description from comment or generating one
         description = indicator.get('comment', '') or f"ESG indicator for {indicator_name.replace('_', ' ').lower()}"
         
         ontology_indicators.append({
@@ -142,7 +142,7 @@ def main():
     # Standardize expanded indicators DataFrame
     expanded_standardized = expanded_df.copy()
     
-    # Ensure all required columns exist
+    #Ensuring all required columns exist
     required_columns = ['indicator_id', 'name', 'description', 'category', 'subcategory', 
                        'data_type', 'unit', 'source', 'framework', 'original_source']
     
@@ -150,7 +150,7 @@ def main():
         if col not in expanded_standardized.columns:
             expanded_standardized[col] = ''
     
-    # Reorder columns to match ontology DataFrame
+    #Reordering columns to match ontology DataFrame
     expanded_standardized = expanded_standardized[required_columns]
     
     print(f"Expanded DataFrame shape: {expanded_standardized.shape}")
@@ -172,15 +172,15 @@ def main():
     
     print("\nCombining and deduplicating...")
     
-    # Combine all three DataFrames
+    #Combining all three DataFrames
     combined_df = pd.concat([ontology_df, expanded_standardized, newly_discovered_standardized], ignore_index=True)
     
     print(f"Combined DataFrame shape before deduplication: {combined_df.shape}")
     
-    # Check for duplicates based on name (case-insensitive)
+    #Checking for duplicates based on name (case-insensitive)
     combined_df['name_lower'] = combined_df['name'].str.lower().str.strip()
     
-    # Find duplicates
+    #Finding duplicates
     duplicates = combined_df[combined_df.duplicated(subset=['name_lower'], keep=False)]
     print(f"\nFound {len(duplicates)} duplicate entries:")
     
@@ -190,13 +190,13 @@ def main():
             dup_entries = duplicates[duplicates['name_lower'] == name]
             print(f"  - {name}: {len(dup_entries)} entries from {dup_entries['source'].unique()}")
     
-    # Remove duplicates - keep the first occurrence (ontology takes precedence)
+    #Removing duplicates - keeping the first occurrence (ontology takes precedence)
     final_df = combined_df.drop_duplicates(subset=['name_lower'], keep='first')
     
-    # Drop the helper column
+    #Dropping the helper column
     final_df = final_df.drop('name_lower', axis=1)
     
-    # Reset index
+    #Resetting index
     final_df = final_df.reset_index(drop=True)
     
     print(f"\nFinal DataFrame shape after deduplication: {final_df.shape}")
@@ -206,7 +206,7 @@ def main():
     print(f"Total unique indicators: {len(final_df)}")
     print()
     
-    # By source
+    #By source
     print("By Source:")
     source_counts = final_df['source'].value_counts()
     for source, count in source_counts.items():
@@ -214,7 +214,7 @@ def main():
         print(f"  {source}: {count} ({percentage:.1f}%)")
     print()
     
-    # By framework
+    #By framework
     print("By Framework:")
     framework_counts = final_df['framework'].value_counts()
     for framework, count in framework_counts.items():
@@ -222,7 +222,7 @@ def main():
         print(f"  {framework}: {count} ({percentage:.1f}%)")
     print()
     
-    # By category
+    #By category
     print("By Category:")
     category_counts = final_df['category'].value_counts()
     for category, count in category_counts.items():
@@ -230,7 +230,7 @@ def main():
         print(f"  {category}: {count} ({percentage:.1f}%)")
     print()
     
-    # By data type
+    #By data type
     print("By Data Type:")
     datatype_counts = final_df['data_type'].value_counts()
     for dtype, count in datatype_counts.items():
@@ -239,12 +239,12 @@ def main():
     
     print("\nSaving combined dataset...")
     
-    # Save as CSV
+    #Saving as CSV
     output_csv = output_dir / 'final_esg_indicators.csv'
     final_df.to_csv(output_csv, index=False, encoding='utf-8')
     print(f"Saved final indicators to: {output_csv}")
     
-    # Save as JSON for detailed structure
+    #Saving as JSON for detailed structure
     output_json = output_dir / 'final_esg_indicators.json'
     
     final_data = {
@@ -273,7 +273,7 @@ def main():
     
     print(f"Saved final indicators JSON to: {output_json}")
     
-    # Save summary statistics
+    #Saving summary statistics
     summary_stats = pd.DataFrame([
         {'metric': 'Total Indicators', 'value': len(final_df)},
         {'metric': 'Ontology Indicators', 'value': len(ontology_df)},
@@ -292,7 +292,7 @@ def main():
     print(f"Columns: {list(final_df.columns)}")
     print()
     
-    # Show sample indicators from each source
+    #Showing sample indicators from each source
     print("Sample indicators by source:")
     for source in final_df['source'].unique():
         sample = final_df[final_df['source'] == source].head(3)

@@ -32,13 +32,13 @@ if os.path.exists(context_module_path):
     context_module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(context_module)
     
-    # Import context-aware classes
+
     ESGContextAwareModule = context_module.ESGContextAwareModule
     ESGSemanticEnhancer = context_module.ESGSemanticEnhancer
     ContextAwareTrainingMixin = context_module.ContextAwareTrainingMixin
     create_context_aware_enhancement = context_module.create_context_aware_enhancement
 else:
-    # Fallback if context module not found
+
     ESGContextAwareModule = None
     ESGSemanticEnhancer = None
     ContextAwareTrainingMixin = None
@@ -54,18 +54,18 @@ class LightweightESGModel(nn.Module):
         self.bert = AutoModel.from_pretrained(model_name)
         self.enable_context_awareness = enable_context_awareness
         
-        # Freeze early layers for efficiency
+
         for param in self.bert.embeddings.parameters():
             param.requires_grad = False
         for i in range(6):
             for param in self.bert.encoder.layer[i].parameters():
                 param.requires_grad = False
         
-        # Match the exact architecture from training script
+
         self.hidden_size = self.config.hidden_size
         self.dropout = nn.Dropout(dropout_rate)
         
-        # Initialize context-aware module if enabled and available
+
         if self.enable_context_awareness and create_context_aware_enhancement is not None:
             self.context_module = create_context_aware_enhancement(
                 hidden_size=self.hidden_size,
@@ -75,7 +75,7 @@ class LightweightESGModel(nn.Module):
         else:
             self.context_module = None
         
-        # ESG Indicator Classification (matching training architecture)
+
         self.indicator_proj = nn.Linear(self.hidden_size, 256)
         self.indicator_bn1 = nn.BatchNorm1d(256)
         self.indicator_hidden = nn.Linear(256, 128)
@@ -83,7 +83,7 @@ class LightweightESGModel(nn.Module):
         self.indicator_output = nn.Linear(128, num_indicators)
         self.indicator_residual = nn.Linear(self.hidden_size, 128)
         
-        # Numerical Detection (matching training architecture)
+
         self.numerical_proj = nn.Linear(self.hidden_size, 128)
         self.numerical_bn1 = nn.BatchNorm1d(128)
         self.numerical_hidden = nn.Linear(128, 64)
@@ -91,7 +91,7 @@ class LightweightESGModel(nn.Module):
         self.numerical_output = nn.Linear(64, 1)
         self.numerical_residual = nn.Linear(self.hidden_size, 64)
         
-        # ESG Category Classification (matching training architecture)
+
         self.category_proj = nn.Linear(self.hidden_size, 64)
         self.category_bn1 = nn.BatchNorm1d(64)
         self.category_hidden = nn.Linear(64, 32)

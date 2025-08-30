@@ -1,7 +1,7 @@
 # FinBERT-ESG: Multi-Task ESG Information Extraction from Corporate Reports
 
 ## Thesis Overview
-**Title**: ESG Information Extraction from Corporate Reports: A Comparative Analysis of Fine-tuned FinBERT vs. Base Models 
+**Title**: ESG Information Extraction from Corporate Reports: A Comparative Analysis of Fine-tuned FinBERT vs. Base FinBERT Model 
 **Type**: Bachelor Thesis
 **Approach**: Fine-tuned FinBERT with lightweight multi-task architecture for ESG indicator classification, numerical data extraction, and category classification
 

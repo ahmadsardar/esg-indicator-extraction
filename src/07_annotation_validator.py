@@ -48,11 +48,11 @@ class ESGAnnotationValidator:
             }
         }
         
-        # Quality distribution by category
+
         quality_by_category = df.groupby(['primary_category', 'annotation_quality']).size().unstack(fill_value=0)
         analysis['quality_by_category'] = quality_by_category.to_dict()
         
-        # Numerical data analysis
+
         numerical_df = df[df['has_numerical_data']]
         if len(numerical_df) > 0:
             analysis['numerical_analysis'] = {
@@ -62,7 +62,7 @@ class ESGAnnotationValidator:
                 'samples_with_multiple_values': len(numerical_df[numerical_df['num_values_found'] > 1])
             }
         
-        # Indicator matching analysis
+
         relevant_df = df[df['is_esg_relevant']]
         if len(relevant_df) > 0:
             analysis['indicator_analysis'] = {
@@ -79,10 +79,10 @@ class ESGAnnotationValidator:
         """Find the best samples for training based on multiple criteria"""
         print(f"\nFinding top {n_samples} training samples...")
         
-        # Create a composite score for sample quality
+
         df['training_score'] = 0
         
-        # Add points for different quality factors
+
         df.loc[df['has_numerical_data'], 'training_score'] += 3
         df.loc[df['is_esg_relevant'], 'training_score'] += 2
         df.loc[df['confidence_score'] > 0.2, 'training_score'] += 2
@@ -93,7 +93,7 @@ class ESGAnnotationValidator:
         df.loc[df['annotation_quality'] == 'high', 'training_score'] += 3
         df.loc[df['annotation_quality'] == 'medium', 'training_score'] += 1
         
-        # Get top samples
+
         best_samples = df.nlargest(n_samples, 'training_score')
         
         print(f"Selected {len(best_samples)} best training samples")
@@ -106,10 +106,10 @@ class ESGAnnotationValidator:
         """Analyze text patterns in annotations"""
         print("\nAnalyzing text patterns...")
         
-        # Text length analysis
+
         text_lengths = df['text_length']
         
-        # Common words in high-quality samples
+
         high_quality_df = df[df['annotation_quality'] == 'high']
         
         patterns = {
@@ -141,7 +141,7 @@ class ESGAnnotationValidator:
         if len(numerical_df) == 0:
             return {'error': 'No numerical data found'}
         
-        # Parse numerical values
+
         all_values = []
         all_units = []
         
@@ -219,7 +219,7 @@ class ESGAnnotationValidator:
             'timestamp': datetime.now().isoformat(),
             'dataset_overview': {
                 'total_samples': len(df),
-                'annotation_file': 'enhanced_esg_annotations_latest.csv',
+                'annotation_file': 'enhanced_esg_annotations.csv',
                 'validation_date': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             },
             'quality_analysis': quality_analysis,

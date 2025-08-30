@@ -23,13 +23,13 @@ class ESGAnnotationSystem:
         self.processed_dir = self.data_dir / 'processed' / 'corporate_reports'
         self.annotations_dir = self.data_dir / 'annotations'
         
-        # Create annotations directory if it doesn't exist
+
         self.annotations_dir.mkdir(exist_ok=True)
         
-        # Load final ESG indicators
+
         self.esg_indicators = self.load_esg_indicators()
         
-        # Enhanced TF-IDF vectorizer for better semantic matching
+
         self.vectorizer = TfidfVectorizer(
             max_features=10000,
             stop_words='english',
@@ -41,31 +41,31 @@ class ESGAnnotationSystem:
             norm='l2'  # L2 normalization
         )
         
-        # Enhanced numerical patterns for better value extraction
+        #Enhanced numerical patterns for better value extraction
         self.numerical_patterns = [
-            # Percentage patterns
+            #Percentage patterns
             r'(\d+(?:[.,]\d+)*)\s*(%|percent|percentage|per cent)',
-            # Weight/mass patterns
+            #Weight/mass patterns
             r'(\d+(?:[.,]\d+)*)\s*(tons?|tonnes?|kt|Mt|Gt|kg|g|mg|lbs?|pounds?)',
-            # Energy patterns
+            #Energy patterns
             r'(\d+(?:[.,]\d+)*)\s*(GWh|MWh|kWh|TWh|TJ|GJ|MJ|kJ|BTU)',
-            # Volume patterns
+            #Volume patterns
             r'(\d+(?:[.,]\d+)*)\s*(m³|cubic meters?|liters?|litres?|gallons?|barrels?)',
-            # Emissions patterns
+            #Emissions patterns
             r'(\d+(?:[.,]\d+)*)\s*(tCO2e?|CO2|CO₂|emissions?|carbon|greenhouse gas)',
-            # Currency patterns
+            #Currency patterns
             r'(\d+(?:[.,]\d+)*)\s*(€|EUR|\$|USD|million|billion|trillion|thousand)',
-            # People patterns
+            #People patterns
             r'(\d+(?:[.,]\d+)*)\s*(employees?|workers?|people|staff|workforce|FTE)',
-            # Time patterns
+            #Time patterns
             r'(\d+(?:[.,]\d+)*)\s*(hours?|days?|weeks?|months?|years?|minutes?)',
-            # Area patterns
+            #Area patterns
             r'(\d+(?:[.,]\d+)*)\s*(hectares?|km²|m²|acres?|square\s+(?:meters?|kilometres?|miles?))',
-            # Water patterns
+            #Water patterns
             r'(\d+(?:[.,]\d+)*)\s*(water|H2O|consumption|usage|withdrawal)',
-            # Waste patterns
+            #Waste patterns
             r'(\d+(?:[.,]\d+)*)\s*(waste|recycled?|landfill|disposal)',
-            # General numerical with units
+            #General numerical with units
             r'(\d+(?:[.,]\d+)*)\s*([A-Za-z]+(?:/[A-Za-z]+)?)',
         ]
         
@@ -92,7 +92,7 @@ class ESGAnnotationSystem:
             raise FileNotFoundError(f"No individual ESG datasets found in {individual_reports_dir}")
         
         for csv_file in csv_files:
-            # Extract report name from filename
+
             report_name = csv_file.stem.replace('_esg_dataset', '')
             df = pd.read_csv(csv_file)
             df['document_id'] = report_name  # Add document identifier
@@ -122,7 +122,7 @@ class ESGAnnotationSystem:
         for pattern in self.numerical_patterns:
             matches = re.finditer(pattern, text, re.IGNORECASE)
             for match in matches:
-                # Skip if we've already extracted from this position
+                #Skipping if already extracted from this position
                 if any(abs(match.start() - pos) < 10 for pos in seen_positions):
                     continue
                     
@@ -132,12 +132,12 @@ class ESGAnnotationSystem:
                 try:
                     value = float(value_str)
                     
-                    # Get surrounding context for better understanding
+                    #Getting surrounding context for better understanding
                     start_context = max(0, match.start() - 50)
                     end_context = min(len(text), match.end() + 50)
                     context = text[start_context:end_context].strip()
                     
-                    # Classify value type based on unit and context
+
                     value_type = self.classify_value_type(unit, context)
                     
                     values.append({
@@ -155,7 +155,7 @@ class ESGAnnotationSystem:
                 except ValueError:
                     continue
         
-        # Sort by confidence and remove low-confidence extractions
+
         values = [v for v in values if v['confidence'] > 0.3]
         values.sort(key=lambda x: x['confidence'], reverse=True)
         
@@ -191,15 +191,15 @@ class ESGAnnotationSystem:
         """Calculate confidence score for numerical extraction"""
         confidence = 0.5  # Base confidence
         
-        # Value reasonableness
+        #Value reasonableness
         if 0 < value < 1e12:  # Reasonable range
             confidence += 0.2
         
-        # Unit specificity
+        #Unit specificity
         if unit and len(unit) > 1:
             confidence += 0.2
         
-        # Context relevance
+        #Context relevance
         esg_keywords = ['sustainability', 'environmental', 'social', 'governance', 'emission', 
                        'energy', 'waste', 'water', 'employee', 'diversity', 'safety']
         if any(keyword in context.lower() for keyword in esg_keywords):
@@ -209,13 +209,13 @@ class ESGAnnotationSystem:
     
     def preprocess_text(self, text: str) -> str:
         """Enhanced text preprocessing for better similarity matching"""
-        # Convert to lowercase
+
         text = text.lower()
         
-        # Remove extra whitespace
+
         text = re.sub(r'\s+', ' ', text)
         
-        # Expand common ESG abbreviations
+
         abbreviations = {
             'ghg': 'greenhouse gas',
             'co2': 'carbon dioxide',
@@ -235,23 +235,23 @@ class ESGAnnotationSystem:
     def calculate_semantic_similarity(self, text: str, indicator_descriptions: List[str]) -> np.ndarray:
         """Enhanced semantic similarity calculation with multiple measures"""
         try:
-            # Preprocess text and descriptions
+
             processed_text = self.preprocess_text(text)
             processed_descriptions = [self.preprocess_text(desc) for desc in indicator_descriptions]
             
-            # Combine text with indicator descriptions
+
             all_texts = [processed_text] + processed_descriptions
             
-            # Fit and transform
+
             tfidf_matrix = self.vectorizer.fit_transform(all_texts)
             
-            # Calculate cosine similarity
+
             cosine_similarities = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:]).flatten()
             
-            # Calculate keyword overlap similarity
+
             keyword_similarities = self.calculate_keyword_similarity(processed_text, processed_descriptions)
             
-            # Combine similarities with weights
+
             combined_similarities = (0.7 * cosine_similarities + 0.3 * keyword_similarities)
             
             return combined_similarities
